@@ -13,7 +13,6 @@ def hamiltonian(vertices, edges):
     for i in range(n):
         if (perm[i], perm[(i+1)%n]) not in edges:
             reject()
-    print(perm)
     accept()
 
 
