@@ -6,7 +6,7 @@ This library is mostly designed for teaching purposes (providing executable pseu
 
 Here is, as an exemple, a nondeterministic algorithm for checking if a graph admits a Hamiltonian cycle (see the file `hamilton.py`)
 
-```
+```python
 from nondeterminism import *
 
 @nondeterministic
