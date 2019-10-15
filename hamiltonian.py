@@ -20,6 +20,6 @@ vertices = {1, 2, 3}
 edges = {(1,3), (3,2), (2,1)}
 
 if hamiltonian(vertices, edges):
-    print('The graph has a Hamiltonian cycle.')
+    print('The graph has a Hamiltonian cycle')
 else:
-    print('The graph has no Hamiltonian cycle.')
+    print('The graph has no Hamiltonian cycle')
