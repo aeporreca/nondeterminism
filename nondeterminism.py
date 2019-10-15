@@ -16,8 +16,8 @@ def _count(function, *args, **kwargs):
         _result.value = 0       # Probably useless.
         return res
 
-# Same thing, but modify function so that it returns the number
-# of accepting computations (processes) on input (*args, **kwargs).
+# Modify function so that it returns True when there is at least one
+# accepting computation (processe) on input (*args, **kwargs).
 
 def nondeterministic(function):
     def wrapper(*args, **kwargs):

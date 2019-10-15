@@ -70,7 +70,7 @@ from nondeterminism import *
 
 @nondeterministic
 def composite(n):
-    d = guess(range(2, n - 1))
+    d = guess(range(2, n))
     if n % d == 0:
         accept()
     else:
