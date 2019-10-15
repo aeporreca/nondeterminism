@@ -4,7 +4,7 @@ Python 3 library for writing nondeterministic algorithms.
 
 This library is mostly designed for teaching purposes (providing executable pseudocode for nondeterministic algorithms), and is not suitable for production code (the implementation is based on fork(2), so currently this code only runs on Unix, and is not optimised).
 
-Here is, as an exemple, a nondeterministic algorithm for checking if a graph admits a Hamiltonian cycle (see the file `hamilton.py`)
+Here is, as an exemple, a nondeterministic algorithm for checking if a graph admits a Hamiltonian cycle (see the file `hamiltonian.py`)
 
 ```python
 from nondeterminism import *
