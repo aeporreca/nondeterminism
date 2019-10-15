@@ -7,12 +7,13 @@ def hamiltonian(vertices, edges):
     for i in range(n):
         v = guess(vertices)
         perm.append(v)
-    for v in perm:
+    for v in vertices:
         if perm.count(v) != 1:
             reject()
     for i in range(n):
         if (perm[i], perm[(i+1)%n]) not in edges:
             reject()
+    print(perm)
     accept()
 
 
