@@ -9,16 +9,16 @@ Here is, as an exemple, a nondeterministic algorithm for checking if a graph adm
 ```python
 from nondeterminism import *
 
+
 @nondeterministic
 def hamiltonian(vertices, edges):
+    vertices = vertices.copy()
     n = len(vertices)
     perm = []
-    for i in range(n):
+    while vertices:
         v = guess(vertices)
         perm.append(v)
-    for v in vertices:
-        if perm.count(v) != 1:
-            reject()
+        vertices.remove(v)
     for i in range(n):
         if (perm[i], perm[(i+1)%n]) not in edges:
             reject()
@@ -32,7 +32,6 @@ if hamiltonian(vertices, edges):
     print('The graph has a Hamiltonian cycle')
 else:
     print('The graph has no Hamiltonian cycle')
-
 ```
 
 For the moment only Boolean-valued functions are supported; each function using nondeterminism (i.e., calling `guess()`, `accept()` and `reject()`) must be decorated with the `@nondeterministic` decorator. Every time you would return `True`, you must instead `accept()`, and similarly each `return False` must be replaced by a call to `reject()`.
@@ -41,6 +40,7 @@ The function `guess()` takes as an optional argument an iterable object, such as
 
 ```python
 from nondeterminism import *
+
 
 @nondeterministic
 def satisfiable(formula):
@@ -52,10 +52,12 @@ def satisfiable(formula):
     else:
         reject()
 
+
 def formula(x, y, z):
     return ((x or y) and
             (y or z) and
             (not x or z))
+
 
 if satisfiable(formula):
     print('The formula is satisfiable')
@@ -68,6 +70,7 @@ Notice that *only* nondeterministic functions must be decorated with `@nondeterm
 ```python
 from nondeterminism import *
 
+
 @nondeterministic
 def composite(n):
     d = guess(range(2, n))
@@ -76,13 +79,16 @@ def composite(n):
     else:
         reject()
 
+
 def prime(n):
     if n < 2:
         return False
     else:
         return not composite(n)
 
+
 numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
 for n in numbers:
     if prime(n):
         print('The integer', n, 'is prime')
