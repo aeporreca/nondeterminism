@@ -1,9 +1,11 @@
 from os import fork, wait, _exit
 from multiprocessing import Value
 
+
 # _result is an unsigned long variable shared among processes.
 
 _result = Value('L', 0)
+
 
 # Modify function so that it returns True when there is at least one
 # accepting computation (processe) on input (*args, **kwargs).
@@ -17,6 +19,7 @@ def nondeterministic(function):
             return _result.value > 0
     wrapper.__name__ = function.__name__
     return wrapper
+
 
 # Only one process runs at a time; this is actually required,
 # since _result can only contain one value. This also avoids
@@ -32,11 +35,13 @@ def guess(choices = (True, False)):
                 break
     _exit(0)
 
+
 # Accept
 
 def accept():
     _result.value = 1
     _exit(0)
+
 
 # Reject
 

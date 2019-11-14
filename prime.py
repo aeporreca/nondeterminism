@@ -1,5 +1,6 @@
 from nondeterminism import *
 
+
 @nondeterministic
 def composite(n):
     d = guess(range(2, n))
@@ -8,11 +9,13 @@ def composite(n):
     else:
         reject()
 
+
 def prime(n):
     if n < 2:
         return False
     else:
         return not composite(n)
+
 
 numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 for n in numbers:
