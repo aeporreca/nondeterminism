@@ -1,15 +1,15 @@
 from nondeterminism import *
 
+
 @nondeterministic
 def hamiltonian(vertices, edges):
+    vertices = vertices.copy()
     n = len(vertices)
     perm = []
-    for i in range(n):
+    while vertices:
         v = guess(vertices)
         perm.append(v)
-    for v in vertices:
-        if perm.count(v) != 1:
-            reject()
+        vertices.remove(v)
     for i in range(n):
         if (perm[i], perm[(i+1)%n]) not in edges:
             reject()

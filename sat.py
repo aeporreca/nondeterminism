@@ -1,5 +1,6 @@
 from nondeterminism import *
 
+
 @nondeterministic
 def satisfiable(formula):
     x = guess()
@@ -10,10 +11,12 @@ def satisfiable(formula):
     else:
         reject()
 
+
 def formula(x, y, z):
     return ((x or y) and
             (y or z) and
             (not x or z))
+
 
 if satisfiable(formula):
     print('The formula is satisfiable')
