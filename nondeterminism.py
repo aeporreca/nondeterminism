@@ -22,8 +22,7 @@ def nondeterministic(function):
 # since _result can only contain one value. This also avoids
 # the need to acquire a lock before manipulating _result.
 
-def guess(choices=None):
-    choices = choices or [False, True]
+def guess(choices = (True, False)):
     for choice in choices:
         if fork() == 0:
             return choice
@@ -31,7 +30,6 @@ def guess(choices=None):
             wait()
             if _result.value: # break early if this branch accepted
                 break
-
     _exit(0)
 
 # Accept
