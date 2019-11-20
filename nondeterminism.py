@@ -1,4 +1,5 @@
 from os import fork, wait, _exit
+from functools import wraps
 from multiprocessing import Value
 
 
@@ -11,13 +12,13 @@ _result = Value('L', 0)
 # accepting computation (processe) on input (*args, **kwargs).
 
 def nondeterministic(function):
+    @wraps(function)
     def wrapper(*args, **kwargs):
         if fork() == 0:
             function(*args, **kwargs)
         else:
             wait()
             return _result.value > 0
-    wrapper.__name__ = function.__name__
     return wrapper
 
 
