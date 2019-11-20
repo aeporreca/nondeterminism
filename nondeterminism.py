@@ -1,11 +1,5 @@
 from os import fork, wait, _exit
 from functools import wraps
-from multiprocessing import Value
-
-
-# _result is an unsigned long variable shared among processes.
-
-_result = Value('L', 0)
 
 
 # Modify function so that it returns True when there is at least one
@@ -17,35 +11,32 @@ def nondeterministic(function):
         if fork() == 0:
             function(*args, **kwargs)
         else:
-            wait()
-            return _result.value > 0
+            result = wait()[1] >> 8
+            return result != 0
     return wrapper
 
 
-# Only one process runs at a time; this is actually required,
-# since _result can only contain one value. This also avoids
-# the need to acquire a lock before manipulating _result.
+# Guess one of the choices
 
 def guess(choices = (True, False)):
+    result = 0
     for choice in choices:
         if fork() == 0:
             return choice
         else:
-            wait()
-            if _result.value: # break early if this branch accepted
+            result = wait()[1] >> 8
+            if result != 0:
                 break
-    _exit(0)
+    _exit(result)
 
 
 # Accept
 
 def accept():
-    _result.value = 1
-    _exit(0)
+    _exit(1)
 
 
 # Reject
 
 def reject():
-    _result.value = 0
     _exit(0)
