@@ -3,7 +3,7 @@ from functools import wraps
 
 
 # Modify function so that it returns True when there is at least one
-# accepting computation (processe) on input (*args, **kwargs).
+# accepting computation (process) on input (*args, **kwargs).
 
 def nondeterministic(function):
     @wraps(function)
