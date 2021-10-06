@@ -4,7 +4,7 @@ A Python 3 library for writing nondeterministic algorithms, as in [“nondetermi
 
 This library is mostly designed for teaching purposes (providing executable pseudocode for nondeterministic algorithms), and is not suitable for production code (the implementation is based on fork(2), so currently this code only runs on Unix, and is not optimised).
 
-Here is, as an exemple, a nondeterministic algorithm for checking if a graph admits a Hamiltonian cycle (see the file `examples/hamiltonian.py`)
+Here is, as an exemple, a nondeterministic algorithm for checking if a graph admits a Hamiltonian cycle. You can run this example with the command `python3 hamiltonian.py` (and similarly for the other examples).
 
 ```python
 from nondeterminism import *
@@ -36,7 +36,7 @@ else:
 
 For the moment only Boolean-valued functions are supported; each function using nondeterminism (i.e., calling `guess()`, `accept()` and `reject()`) must be decorated with the `@nondeterministic` decorator. Every time you would return `True`, you must instead `accept()`, and similarly each `return False` must be replaced by a call to `reject()`.
 
-The function `guess()` takes as an optional argument an iterable object, such as a `list` or a `set`, and defaults to returning either `True` or `False`, as shown by the following example (solving SAT over three variables, see `examples/sat.py`):
+The function `guess()` takes as an optional argument an iterable object, such as a `list` or a `set`, and defaults to returning either `True` or `False`, as shown by the following example (solving SAT over three variables, see `sat.py`):
 
 ```python
 from nondeterminism import *
@@ -65,7 +65,7 @@ else:
     print('The formula is not satisfiable')
 ```
 
-Notice that *only* nondeterministic functions must be decorated with `@nondeterministic`, as shown by the following code for checking the primality of natural numbers (see `examples/prime.py`):
+Notice that *only* nondeterministic functions must be decorated with `@nondeterministic`, as shown by the following code for checking the primality of natural numbers (see `prime.py`):
 
 ```python
 from nondeterminism import *
