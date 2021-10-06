@@ -17,7 +17,7 @@ def hamiltonian(vertices, edges):
 
 
 vertices = {1, 2, 3}
-edges = {(1,3), (3,2), (2,1)}
+edges = {(1,3), (3,1), (3,2), (2,3), (2,1), (1,2)}
 
 if hamiltonian(vertices, edges):
     print('The graph has a Hamiltonian cycle')
