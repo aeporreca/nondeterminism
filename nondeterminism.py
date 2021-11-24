@@ -12,8 +12,8 @@ def guess(choices = (False, True)):
             return choice
         else:
             _, status = os.wait()
-            if status >> 8 == 0:
-                os._exit(0)
+            if status >> 8 == 0:                  # Found an acceptable result
+                os._exit(0)                       # No need to go on
     os._exit(1)
 
 
@@ -24,16 +24,16 @@ def nondeterministic(function):
     @functools.wraps(function)
     def wrapper(*args, **kwargs):
         queue = mp.SimpleQueue()
-        queue.put(None)
+        queue.put(None)                           # Always something to return
         if os.fork() == 0:
             result = function(*args, **kwargs)
-            queue.get()
-            queue.put(result)
+            queue.get()                           # We only keep one result
+            queue.put(result)                     # Replace the previous result
             if (result is not None and
-                    result is not False):
-                os._exit(0)
+                    result is not False):         # Found an acceptable result
+                os._exit(0)                       # No need to go on
             else:
-                os._exit(1)
+                os._exit(1)                       # Keep on searching
         else:
             os.wait()
             return queue.get()
