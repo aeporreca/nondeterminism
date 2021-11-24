@@ -26,8 +26,8 @@ def nondeterministic(function):
     return wrapper
 
 
-# Guess one of the choices, halting as soon as a
-# computation accepts (returns non-False, non-None)
+# Guess one of the choices, halting as soon as a computation
+# accepts (i.e., it returns non-False, non-None)
 
 def guess(choices = (False, True)):
     for choice in choices:
