@@ -12,14 +12,11 @@ def hamiltonian(vertices, edges):
         vertices.remove(v)
     for i in range(n):
         if (perm[i], perm[(i+1)%n]) not in edges:
-            reject()
-    accept()
+            return False
+    return True
 
 
 vertices = {1, 2, 3}
-edges = {(1,3), (3,1), (3,2), (2,3), (2,1), (1,2)}
-
-if hamiltonian(vertices, edges):
-    print('The graph has a Hamiltonian cycle')
-else:
-    print('The graph has no Hamiltonian cycle')
+edges = {(1, 3), (3, 1), (3, 2), (2, 1)}
+result = hamiltonian(vertices, edges)
+print('Does the graph has a Hamiltonian cycle?', result)

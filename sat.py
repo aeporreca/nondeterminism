@@ -6,10 +6,7 @@ def satisfiable(formula):
     x = guess()
     y = guess()
     z = guess()
-    if formula(x, y, z):
-        accept()
-    else:
-        reject()
+    return formula(x, y, z)
 
 
 def formula(x, y, z):
@@ -18,7 +15,5 @@ def formula(x, y, z):
             (not x or z))
 
 
-if satisfiable(formula):
-    print('The formula is satisfiable')
-else:
-    print('The formula is not satisfiable')
+result = satisfiable(formula)
+print('Is the formula is satisfiable?', result)

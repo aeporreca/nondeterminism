@@ -21,20 +21,17 @@ def hamiltonian(vertices, edges):
         vertices.remove(v)
     for i in range(n):
         if (perm[i], perm[(i+1)%n]) not in edges:
-            reject()
-    accept()
+            return False
+    return True
 
 
 vertices = {1, 2, 3}
-edges = {(1,3), (3,1), (3,2), (2,3), (2,1), (1,2)}
-
-if hamiltonian(vertices, edges):
-    print('The graph has a Hamiltonian cycle')
-else:
-    print('The graph has no Hamiltonian cycle')
+edges = {(1, 3), (3, 1), (3, 2), (2, 1)}
+result = hamiltonian(vertices, edges)
+print('Does the graph has a Hamiltonian cycle?', result)
 ```
 
-For the moment only Boolean-valued functions are supported; each function using nondeterminism (i.e., calling `guess()`, `accept()` and `reject()`) must be decorated with the `@nondeterministic` decorator. Every time you would return `True`, you must instead `accept()`, and similarly each `return False` must be replaced by a call to `reject()`.
+Each function using nondeterminism (i.e., calling `guess()`) must be decorated with the `@nondeterministic` decorator.
 
 The function `guess()` takes as an optional argument an iterable object, such as a `list` or a `set`, and defaults to returning either `True` or `False`, as shown by the following example (solving SAT over three variables, see `sat.py`):
 
@@ -47,10 +44,7 @@ def satisfiable(formula):
     x = guess()
     y = guess()
     z = guess()
-    if formula(x, y, z):
-        accept()
-    else:
-        reject()
+    return formula(x, y, z)
 
 
 def formula(x, y, z):
@@ -59,13 +53,11 @@ def formula(x, y, z):
             (not x or z))
 
 
-if satisfiable(formula):
-    print('The formula is satisfiable')
-else:
-    print('The formula is not satisfiable')
+result = satisfiable(formula)
+print('Is the formula is satisfiable?', result)
 ```
 
-Notice that *only* nondeterministic functions must be decorated with `@nondeterministic`, as shown by the following code for checking the primality of natural numbers (see `prime.py`):
+Notice that only nondeterministic functions need to be decorated with `@nondeterministic`, as shown by the following code for checking the primality of natural numbers (see `prime.py`):
 
 ```python
 from nondeterminism import *
@@ -73,25 +65,42 @@ from nondeterminism import *
 
 @nondeterministic
 def composite(n):
-    d = guess(range(2, n))
-    if n % d == 0:
-        accept()
-    else:
-        reject()
-
-
-def prime(n):
-    if n < 2:
+    if n < 3:
         return False
-    else:
-        return not composite(n)
+    d = guess(range(2, n))
+    return n % d == 0
 
 
-numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+@nondeterministic
+def prime(n):
+    return n > 1 and not composite(n)
 
-for n in numbers:
+
+maximum = 100
+print(f'The primes below {maximum} are:')
+for n in range(maximum):
     if prime(n):
-        print('The integer', n, 'is prime')
-    else:
-        print('The integer', n, 'is not prime')
+        print(n)
+```
+
+You can also return non-Boolean values. In that case, the first result different from False and None is returned.
+
+```python
+from nondeterminism import *
+
+
+@nondeterministic
+def subset_sum(values, target):
+    subset = set()
+    for x in values:
+        if guess():
+            subset.add(x)
+    if sum(subset) == target:
+        return subset
+
+
+values = {1, 2, 3, 5}
+for target in range(10):
+    result = subset_sum(values, target)
+    print(f'A subset {values} having sum {target} is:', result)
 ```

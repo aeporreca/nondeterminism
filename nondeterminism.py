@@ -1,42 +1,40 @@
-from os import fork, wait, _exit
-from functools import wraps
+import functools
+import multiprocessing as mp
+import os
 
 
-# Modify function so that it returns True when there is at least one
-# accepting computation (process) on input (*args, **kwargs).
+# Guess one of the choices, halting as soon as a
+# computation accepts (returns non-False, non-None)
 
-def nondeterministic(function):
-    @wraps(function)
-    def wrapper(*args, **kwargs):
-        if fork() == 0:
-            function(*args, **kwargs)
-        else:
-            result = wait()[1] >> 8
-            return result != 0
-    return wrapper
-
-
-# Guess one of the choices
-
-def guess(choices = (True, False)):
-    result = 0
+def guess(choices = (False, True)):
     for choice in choices:
-        if fork() == 0:
+        if os.fork() == 0:
             return choice
         else:
-            result = wait()[1] >> 8
-            if result != 0:
-                break
-    _exit(result)
+            _, status = os.wait()
+            if status >> 8 == 0:
+                os._exit(0)
+    os._exit(1)
 
 
-# Accept
+# Nondeterminism decorator, modify function so that it returns
+# a non-False, non-None result from an accepting computation
 
-def accept():
-    _exit(1)
-
-
-# Reject
-
-def reject():
-    _exit(0)
+def nondeterministic(function):
+    @functools.wraps(function)
+    def wrapper(*args, **kwargs):
+        queue = mp.SimpleQueue()
+        queue.put(None)
+        if os.fork() == 0:
+            result = function(*args, **kwargs)
+            queue.get()
+            queue.put(result)
+            if (result is not None and
+                    result is not False):
+                os._exit(0)
+            else:
+                os._exit(1)
+        else:
+            os.wait()
+            return queue.get()
+    return wrapper
