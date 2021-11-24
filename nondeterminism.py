@@ -3,20 +3,6 @@ import multiprocessing as mp
 import os
 
 
-# Guess one of the choices, halting as soon as a
-# computation accepts (returns non-False, non-None)
-
-def guess(choices = (False, True)):
-    for choice in choices:
-        if os.fork() == 0:
-            return choice
-        else:
-            _, status = os.wait()
-            if status >> 8 == 0:                  # Found an acceptable result
-                os._exit(0)                       # No need to go on
-    os._exit(1)
-
-
 # Nondeterminism decorator, modify function so that it returns
 # a non-False, non-None result from an accepting computation
 
@@ -35,6 +21,20 @@ def nondeterministic(function):
             else:
                 os._exit(1)                       # Keep on searching
         else:
-            os.wait()
+            os.wait()                             # No need to check the status
             return queue.get()
     return wrapper
+
+
+# Guess one of the choices, halting as soon as a
+# computation accepts (returns non-False, non-None)
+
+def guess(choices = (False, True)):
+    for choice in choices:
+        if os.fork() == 0:
+            return choice
+        else:
+            _, status = os.wait()
+            if status >> 8 == 0:                  # Found an acceptable result
+                os._exit(0)                       # No need to go on
+    os._exit(1)                                   # Exhausted all choices
