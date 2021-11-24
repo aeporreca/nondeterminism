@@ -82,7 +82,7 @@ for n in range(maximum):
         print(n)
 ```
 
-You can also return non-Boolean values. In that case, the first result different from False and None is returned.
+You can also return non-Boolean values. In that case, the first result different from `False` and `None` is returned (see `subsetsum.py`):
 
 ```python
 from nondeterminism import *
