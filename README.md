@@ -71,7 +71,6 @@ def composite(n):
     return n % d == 0
 
 
-@nondeterministic
 def prime(n):
     return n > 1 and not composite(n)
 
