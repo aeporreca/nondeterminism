@@ -82,7 +82,7 @@ for n in range(maximum):
         print(n)
 ```
 
-You can also return non-Boolean values. In that case, the first result different from `False` and `None` is returned (see `subsetsum.py`):
+You can also return non-Boolean values. In that case, the first result different from `False` and `None` is returned. Here we search for a subset of the `values` having sum `target`, and return the subset itself rather than just `True` if it exists (see `subsetsum.py`):
 
 ```python
 from nondeterminism import *
