@@ -12,6 +12,6 @@ def subset_sum(values, target):
 
 
 values = {1, 4, 5}
-for target in range(10):
+for target in range(sum(values)+1):
     result = subset_sum(values, target)
     print(f'A subset of {values} having sum {target} is:', result)
