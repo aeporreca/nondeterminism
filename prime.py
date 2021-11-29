@@ -3,23 +3,18 @@ from nondeterminism import *
 
 @nondeterministic
 def composite(n):
+    if n < 3:
+        return False
     d = guess(range(2, n))
-    if n % d == 0:
-        accept()
-    else:
-        reject()
+    return n % d == 0
 
 
 def prime(n):
-    if n < 2:
-        return False
-    else:
-        return not composite(n)
+    return n > 1 and not composite(n)
 
 
-numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-for n in numbers:
+maximum = 100
+print(f'The primes below {maximum} are:')
+for n in range(maximum):
     if prime(n):
-        print('The integer', n, 'is prime')
-    else:
-        print('The integer', n, 'is not prime')
+        print(n)

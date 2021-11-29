@@ -1,42 +1,41 @@
-from os import fork, wait, _exit
-from functools import wraps
+import functools
+import multiprocessing as mp
+import os
 
 
-# Modify function so that it returns True when there is at least one
-# accepting computation (process) on input (*args, **kwargs).
+# Nondeterminism decorator, modify function so that it returns
+# a non-False, non-None result from an accepting computation
 
 def nondeterministic(function):
-    @wraps(function)
+    @functools.wraps(function)
     def wrapper(*args, **kwargs):
-        if fork() == 0:
-            function(*args, **kwargs)
+        queue = mp.SimpleQueue()
+        queue.put(None)                           # Always something to return
+        if os.fork() == 0:
+            result = function(*args, **kwargs)
+            queue.get()                           # We only keep one result
+            queue.put(result)                     # Replace the previous result
+            if (result is not None and
+                    result is not False):         # Found an acceptable result
+                os._exit(0)                       # No need to go on
+            else:
+                os._exit(1)                       # Keep on searching
         else:
-            result = wait()[1] >> 8
-            return result != 0
+            os.wait()                             # No need to check the status
+            return queue.get()
     return wrapper
 
 
-# Guess one of the choices
+# Guess one of the choices, halting as soon as a computation
+# accepts (i.e., it returns non-False, non-None)
 
 def guess(choices=(True, False)):
     result = 0
     for choice in choices:
-        if fork() == 0:
+        if os.fork() == 0:
             return choice
         else:
-            result = wait()[1] >> 8
-            if result != 0:
-                break
-    _exit(result)
-
-
-# Accept
-
-def accept():
-    _exit(1)
-
-
-# Reject
-
-def reject():
-    _exit(0)
+            _, status = os.wait()
+            if status >> 8 == 0:                  # Found an acceptable result
+                os._exit(0)                       # No need to go on
+    os._exit(1)                                   # Exhausted all choices
