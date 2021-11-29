@@ -18,7 +18,7 @@ def nondeterministic(function):
 
 # Guess one of the choices
 
-def guess(choices = (True, False)):
+def guess(choices=(True, False)):
     result = 0
     for choice in choices:
         if fork() == 0:
