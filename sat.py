@@ -16,4 +16,4 @@ def formula(x, y, z):
 
 
 result = satisfiable(formula)
-print('Is the formula is satisfiable?', result)
+print('Is the formula satisfiable?', result)

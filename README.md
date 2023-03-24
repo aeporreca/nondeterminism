@@ -54,7 +54,7 @@ def formula(x, y, z):
 
 
 result = satisfiable(formula)
-print('Is the formula is satisfiable?', result)
+print('Is the formula satisfiable?', result)
 ```
 
 Notice that only nondeterministic functions need to be decorated with `@nondeterministic`, as shown by the following code for checking the primality of natural numbers (see `prime.py`):
