@@ -15,9 +15,12 @@ def satisfiable(formula):
     return formula(x, y, z)
 
 
+from math import isqrt
+
+
 @conondeterministic
-def prime(n):
+def is_prime(n):
     if n < 2:
         return False
-    d = guess(range(2, n))
+    d = guess(range(2, isqrt(n) + 1))
     return n % d != 0
