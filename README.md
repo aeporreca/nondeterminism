@@ -2,7 +2,7 @@
 
 A Python 3 library for writing nondeterministic algorithms, as in [nondeterministic Turing machines](https://en.wikipedia.org/wiki/Non-deterministic_Turing_machine).
 
-This library is mostly designed for teaching purposes (providing executable pseudocode for nondeterministic algorithms), and is not suitable for production code (the implementation is based on `fork(2)`, so currently this code only runs on Unix, and is not optimised).
+This library is mostly designed for teaching purposes (providing executable pseudocode for nondeterministic algorithms), and is not suitable for production code (the implementation is based on `fork(2)`, so this code currently only runs on Unix, and is very slow for any nontrivial practical purpose).
 
 Here is, as an exemple, a nondeterministic algorithm for checking if a graph admits a Hamiltonian cycle.
 
