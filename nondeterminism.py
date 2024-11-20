@@ -30,7 +30,6 @@ def nondeterministic(function):
 # accepts (i.e., it returns non-False, non-None)
 
 def guess(choices=(True, False)):
-    result = 0
     for choice in choices:
         if os.fork() == 0:
             return choice
