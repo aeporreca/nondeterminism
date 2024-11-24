@@ -35,6 +35,6 @@ def guess(choices=(False, True)):
             return choice
         else:
             _, status = os.wait()
-            if status >> 8 == 0:                  # Found an acceptable result
+            if os.WEXITSTATUS(status) == 0:       # Found an acceptable result
                 os._exit(0)                       # No need to go on
     os._exit(1)                                   # Exhausted all choices
