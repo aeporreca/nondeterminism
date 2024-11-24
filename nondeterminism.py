@@ -1,4 +1,4 @@
-import functools
+import functools as ft
 import multiprocessing as mp
 import os
 
@@ -7,7 +7,7 @@ import os
 # a non-False, non-None result from an accepting computation
 
 def nondeterministic(function):
-    @functools.wraps(function)
+    @ft.wraps(function)
     def wrapper(*args, **kwargs):
         queue = mp.SimpleQueue()
         queue.put(None)                           # Always something to return
