@@ -29,7 +29,7 @@ def nondeterministic(function):
 # Guess one of the choices, halting as soon as a computation
 # accepts (i.e., it returns non-False, non-None)
 
-def guess(choices=(True, False)):
+def guess(choices=(False, True)):
     for choice in choices:
         if os.fork() == 0:
             return choice
