@@ -1,26 +1,23 @@
-import functools
+__all__ = ['nondeterministic', 'conondeterministic', 'guess']
+
+import functools as ft
 import multiprocessing as mp
 import os
 
 
-# TODO: This needs some serious refactoring, a lot of the code
-# is duplicated
+# Nondeterminism decorator, modify function so that it returns
+# a non-False, non-None result from an accepting computation
 
-
-# Nondeterminism decorator, modify function so that it returns a
-# non-False, non-None result from an accepting computation
-
-def nondeterministic(function):
-    @functools.wraps(function)
+def decorate(function, default, is_good):
+    @ft.wraps(function)
     def wrapper(*args, **kwargs):
         queue = mp.SimpleQueue()
-        queue.put(None)                           # Always something to return
+        queue.put(default)                        # Always something to return
         if os.fork() == 0:
             result = function(*args, **kwargs)
             queue.get()                           # We only keep one result
             queue.put(result)                     # Replace the previous result
-            if (result is not None and
-                    result is not False):         # Found an acceptable result
+            if is_good(result):                   # Found an acceptable result
                 os._exit(0)                       # No need to go on
             else:
                 os._exit(1)                       # Keep on searching
@@ -30,58 +27,31 @@ def nondeterministic(function):
     return wrapper
 
 
-# Conondeterminism decorator, modify function so that it returns
-# True if and only if the original always returns False
+def is_not_none_or_false(result):
+    return result is not None and result is not False
+
+
+def nondeterministic(function):
+    return decorate(function, None, is_not_none_or_false)
+
+
+def is_none_or_false(result):
+    return result is None or result is False
+
 
 def conondeterministic(function):
-    @functools.wraps(function)
-    def wrapper(*args, **kwargs):
-        queue = mp.SimpleQueue()
-        queue.put(True)
-        if os.fork() == 0:
-            result = function(*args, **kwargs)
-            queue.get()
-            queue.put(result)
-            if result is False:
-                os._exit(0)
-            else:
-                os._exit(1)
-        else:
-            os.wait()
-            return queue.get()
-    return wrapper
-
-
-# Counting decorator, modify function so that it returns the number of
-# non-False, non-None results
-
-def counting(function):
-    @functools.wraps(function)
-    def wrapper(*args, **kwargs):
-        queue = mp.SimpleQueue()
-        queue.put(0)
-        if os.fork() == 0:
-            result = function(*args, **kwargs)
-            if (result is not None and
-                    result is not False):
-                queue.put(queue.get() + 1)
-            os._exit(1)
-        else:
-            os.wait()
-            return queue.get()
-    return wrapper
+    return decorate(function, True, is_none_or_false)
 
 
 # Guess one of the choices, halting as soon as a computation
 # accepts (i.e., it returns non-False, non-None)
 
-def guess(choices=(True, False)):
-    result = 0
+def guess(choices=(False, True)):
     for choice in choices:
         if os.fork() == 0:
             return choice
         else:
             _, status = os.wait()
-            if status >> 8 == 0:                  # Found an acceptable result
+            if os.WEXITSTATUS(status) == 0:       # Found an acceptable result
                 os._exit(0)                       # No need to go on
     os._exit(1)                                   # Exhausted all choices
