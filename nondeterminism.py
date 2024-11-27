@@ -37,6 +37,20 @@ def decorate(function, initial, combine, stop, post):
     return wrapper
 
 
+# Guess one of the choices, halting as soon as a computation
+# accepts (i.e., it returns non-False, non-None)
+
+def guess(choices=(False, True)):
+    for choice in choices:
+        if os.fork() == 0:
+            return choice
+        else:
+            _, status = os.wait()
+            if os.WEXITSTATUS(status) == 0:       # Found an acceptable result
+                os._exit(0)                       # No need to go on
+    os._exit(1)                                   # Exhausted all choices
+
+
 # Combination functions
 
 def _or(accum, result):
@@ -103,17 +117,3 @@ def counting(function):
 def majority(function):
     return decorate(function, (0, 0), add_and_count,
                     do_not_stop, check_majority)
-
-
-# Guess one of the choices, halting as soon as a computation
-# accepts (i.e., it returns non-False, non-None)
-
-def guess(choices=(False, True)):
-    for choice in choices:
-        if os.fork() == 0:
-            return choice
-        else:
-            _, status = os.wait()
-            if os.WEXITSTATUS(status) == 0:       # Found an acceptable result
-                os._exit(0)                       # No need to go on
-    os._exit(1)                                   # Exhausted all choices
