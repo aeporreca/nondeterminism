@@ -1,4 +1,5 @@
 __all__ = [
+    'deterministic',
     'nondeterministic',
     'conondeterministic',
     'counting',
@@ -53,6 +54,10 @@ def guess(choices=(False, True)):
 
 # Combination functions
 
+def replace(accum, result):
+    return result
+
+
 def _or(accum, result):
     return accum or result
 
@@ -70,6 +75,9 @@ def add_and_count(accum, result):
 
 
 # Stopping functions
+
+def stop(result):
+    return True
 
 def is_none_or_false(result):
     return result is None or result is False
@@ -91,6 +99,13 @@ def identity(result):
 
 def check_majority(result):
     return 2 * result[0] > result[1]
+
+
+# Make the function... deterministic (useless but it shows that this
+# library covers the trivial case)
+
+def deterministic(function):
+    return decorate(function, None, replace, stop, identity)
 
 
 # Make the function nondeterministic
