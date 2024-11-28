@@ -11,6 +11,21 @@ __all__ = [
 import functools as ft
 import multiprocessing as mp
 import os
+import operator as op
+
+
+# Default combine, inject and shortcircuit for nondeterminize
+
+def disjunction(x, y):
+    return x or y
+
+
+def identity(x):
+    return x
+
+
+def never(x):
+    return False
 
 
 # Main decorator, modify function so that it returns the result of
@@ -18,23 +33,26 @@ import os
 # function, starting from initial and stopping when indicated by stop;
 # finally, return apply post to the accumulator
 
-def decorate(function, initial, combine, stop, post):
+def nondeterminize(function, combine=disjunction, start=None,
+                   inject=identity, shortcircuit=never,
+                   postprocess=identity):
     @ft.wraps(function)
     def wrapper(*args, **kwargs):
         queue = mp.SimpleQueue()
-        queue.put(initial)                        # Initial accumulator
+        queue.put(start)                          # Initial acculator
         if os.fork() == 0:
             result = function(*args, **kwargs)    # Actually execute function
-            accum = queue.get()                   # Get the accumulated result
-            accum = combine(accum, result)        # Update it
-            queue.put(accum)                      # Replace the accumulator
-            if stop(accum):                       # Found an acceptable result
+            acc = queue.get()                     # Get the acculated result
+            acc = combine(acc, inject(result))    # Update it
+            print(acc)
+            queue.put(acc)                        # Replace the acculator
+            if shortcircuit(acc):                 # Stop here
                 os._exit(0)                       # No need to go on
             else:
                 os._exit(1)                       # Keep on computing
         else:
             os.wait()                             # No need to check the status
-            return post(queue.get())              # Postprocessing
+            return postprocess(queue.get())       # Postprocessing
     return wrapper
 
 
@@ -52,83 +70,67 @@ def guess(choices=(False, True)):
     os._exit(1)                                   # Exhausted all choices
 
 
-# Combination functions
+# Deterministic decorator
 
-def replace(accum, result):
-    return result
-
-
-def _or(accum, result):
-    return accum or result
-
-
-def _and(accum, result):
-    return accum and result
-
-
-def add(accum, result):
-    return accum + is_not_none_or_false(result)
-
-
-def add_and_count(accum, result):
-    return (accum[0] + is_not_none_or_false(result), accum[1] + 1)
-
-
-# Stopping functions
-
-def stop(result):
+def always(x):
     return True
 
-def is_none_or_false(result):
-    return result is None or result is False
-
-
-def is_not_none_or_false(result):
-    return result is not None and result is not False
-
-
-def do_not_stop(result):
-    return False
-
-
-# Postprocessing functions
-
-def identity(result):
-    return result
-
-
-def check_majority(result):
-    return 2 * result[0] > result[1]
-
-
-# Make the function... deterministic (useless but it shows that this
-# library covers the trivial case)
 
 def deterministic(function):
-    return decorate(function, None, replace, stop, identity)
+    return nondeterminize(function, shortcircuit=always)
 
 
-# Make the function nondeterministic
+# Noneterministic decorator
+
+def is_success(x):
+    return x is not None and x is not False
+
 
 def nondeterministic(function):
-    return decorate(function, None, _or, is_not_none_or_false, identity)
+    return nondeterminize(function, shortcircuit=is_success)
 
 
-# Make the function conondeterministic
+# Cononeterministic decorator
+
+def conjunction(x, y):
+    return x and y
+
+
+def is_failure(x):
+    return x is None or x is False
+
 
 def conondeterministic(function):
-    return decorate(function, True, _and, is_none_or_false, identity)
+    return nondeterminize(function, combine=conjunction,
+                          start=True, shortcircuit=is_failure)
 
 
-# Make the function return the number of accepting computations
+# Counting decorator
+
+def binarize(x):
+    return int(x is not None and x is not False)
+
 
 def counting(function):
-    return decorate(function, 0, add, do_not_stop, identity)
+    return nondeterminize(function, combine=op.add,
+                          start=0, inject=binarize)
 
 
-# Make the function return true iff the majority of its computations
-# are accepting
+# Majority decorator
+
+def tuple_add(x, y):
+    return (x[0] + y[0], x[1] + y[1])
+
+
+def binarize_and_count(x):
+    return (binarize(x), 1)
+
+
+def check_majority(acc):
+    return 2 * acc[0] > acc[1]
+
 
 def majority(function):
-    return decorate(function, (0, 0), add_and_count,
-                    do_not_stop, check_majority)
+    return nondeterminize(function, combine=tuple_add,
+                          start=(0, 0), inject=binarize_and_count,
+                          postprocess=check_majority)
