@@ -40,13 +40,13 @@ def nondeterminize(function, combine=disjunction, start=None,
     @ft.wraps(function)
     def wrapper(*args, **kwargs):
         queue = mp.SimpleQueue()
-        queue.put(start)                          # Initial acculator
+        queue.put(start)                          # Initial accumulator
         if os.fork() == 0:
             result = function(*args, **kwargs)    # Actually execute function
-            acc = queue.get()                     # Get the acculated result
+            acc = queue.get()                     # Get the accumulated result
             acc = combine(acc, inject(result))    # Update it
             print(acc)
-            queue.put(acc)                        # Replace the acculator
+            queue.put(acc)                        # Replace the accumulator
             if shortcircuit(acc):                 # Stop here
                 os._exit(0)                       # No need to go on
             else:
