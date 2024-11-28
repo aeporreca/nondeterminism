@@ -28,11 +28,10 @@ def never(x):
     return False
 
 
-# General decorator, modify function so that it returns the result of
-# accumulating by combine the injection of the return values of the
-# computations of function, starting from start and stopping when
-# shorcircuit by stop; finally, return postprocess applied to the
-# accumulator
+# Modify function so that it returns the result of accumulating by
+# combine the injection of the return values of the computations of
+# function, starting from start and stopping when shorcircuit by stop;
+# finally, return postprocess applied to the accumulator
 
 def nondeterminize(function, combine=disjunction, start=None,
                    inject=identity, shortcircuit=never,
