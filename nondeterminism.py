@@ -43,7 +43,7 @@ def nondeterminize(function, combine=disjunction, start=None,
         queue.put(start)                          # Initial accumulator
         if os.fork() == 0:
             result = function(*args, **kwargs)    # Actually execute function
-            acc = queue.get()                     # Get the accumulated result
+            acc = queue.get()                     # Get the accumulator
             acc = combine(acc, inject(result))    # Update it
             print(acc)
             queue.put(acc)                        # Replace the accumulator
