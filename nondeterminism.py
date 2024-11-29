@@ -66,7 +66,6 @@ def guess(choices=(False, True)):
     os._exit(1)                                   # Exhausted all choices
 
 
-
 # Nondeterministic decorator
 
 def nondeterministic(function):
