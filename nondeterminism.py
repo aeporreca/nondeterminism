@@ -44,6 +44,7 @@ def is_success(value):
 
 class Or(CompTree):
     def eval(self):
+        value = False
         for child in self.children:
             value = eval(child)
             if is_success(value):
@@ -58,6 +59,7 @@ def is_failure(value):
 
 class And(CompTree):
     def eval(self):
+        value = True
         for child in self.children:
             value = eval(child)
             if is_failure(value):
