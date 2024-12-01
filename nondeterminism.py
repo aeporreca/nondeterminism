@@ -2,7 +2,7 @@ from __future__ import annotations
 
 
 __all__ = [
-    'deterministic', 'guess', 'coguess',
+    'nondeterministic', 'guess', 'coguess',
     'Or', 'And', 'Count', 'Majority', 'Maximize',
     'is_leaf', 'is_true',
 ]
