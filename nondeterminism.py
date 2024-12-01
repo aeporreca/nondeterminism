@@ -35,22 +35,34 @@ def eval(result):
         return result
     else:
         return result.eval()
+
+
+def is_success(value):
+    return (value is not None and
+            value is not False)
         
 
 class Or(CompTree):
-    def __bool__(self):
-        return any(self.children)
-
     def eval(self):
-        return bool(self)
-            
+        for child in self.children:
+            value = eval(child)
+            if is_success(value):
+                return value
+        return value
+
+
+def is_failure(value):
+    return (value is None or
+            value is False)
+
 
 class And(CompTree):
-    def __bool__(self):
-        return all(self.children)
-
     def eval(self):
-        return bool(self)
+        for child in self.children:
+            value = eval(child)
+            if is_failure(value):
+                return value
+        return value
 
 
 class CountingCompTree(CompTree):
