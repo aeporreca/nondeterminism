@@ -3,8 +3,8 @@ from __future__ import annotations
 
 __all__ = [
     'nondeterministic', 'guess', 'coguess',
-    'Or', 'And', 'Count', 'Majority', 'Maximize',
-    'is_leaf', 'is_true',
+    'Or', 'And', 'Count', 'Majority', 'maximize', 'minimize',
+    'is_success', 'is_failure', 'is_leaf', 'is_true',
 ]
 
 
@@ -17,17 +17,22 @@ from abc import ABC, abstractmethod
 from typing import Callable
 
 
-@dataclass
-class CompTree[T](ABC):
-    children: list[CompTree[T] | T]
-
-    @abstractmethod
-    def eval(self):
-        ...
-
-
 def is_leaf(tree):
     return not isinstance(tree, CompTree)
+
+
+def is_success(value):
+    return (value is not None and
+            value is not False)
+        
+
+def is_failure(value):
+    return (value is None or
+            value is False)
+
+
+def is_true(x):
+    return x is True
 
 
 def eval(result):
@@ -37,10 +42,26 @@ def eval(result):
         return result.eval()
 
 
-def is_success(value):
-    return (value is not None and
-            value is not False)
-        
+def maximize(function):
+    def partial(children):
+        return Maximize(children, function)
+    return partial
+
+
+def minimize(function):
+    def partial(children):
+        return Minimize(children, function)
+    return partial
+
+
+@dataclass
+class CompTree[T](ABC):
+    children: list[CompTree[T] | T]
+
+    @abstractmethod
+    def eval(self):
+        ...
+
 
 class Or(CompTree):
     def eval(self):
@@ -50,11 +71,6 @@ class Or(CompTree):
             if is_success(value):
                 return value
         return value
-
-
-def is_failure(value):
-    return (value is None or
-            value is False)
 
 
 class And(CompTree):
@@ -78,10 +94,6 @@ class CountingCompTree(CompTree):
         return cnt
 
 
-def is_true(x):
-    return x is True
-
-
 class Count(CountingCompTree):
     def eval(self):
         return self.count(is_true)
@@ -95,7 +107,7 @@ class Majority(CountingCompTree):
 
 
 @dataclass
-class Maximize_[T](CompTree):
+class Maximize[T](CompTree):
     function: Callable[[T], int | float]
 
     def eval(self):
@@ -103,10 +115,13 @@ class Maximize_[T](CompTree):
         return max(domain, key=self.function)
 
 
-def Maximize(function):
-    def partial(children):
-        return Maximize_(children, function)
-    return partial
+@dataclass
+class Minimize[T](CompTree):
+    function: Callable[[T], int | float]
+
+    def eval(self):
+        domain = (eval(child) for child in self.children)
+        return min(domain, key=self.function)
 
 
 RESULT = mp.SimpleQueue()
