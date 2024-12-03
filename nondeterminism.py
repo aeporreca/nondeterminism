@@ -131,7 +131,7 @@ class Minimize[T](OptimizingCompTree):
         return self.optimize(min)
 
 
-RESULT: Any = mp.SimpleQueue()
+RESULT = mp.SimpleQueue[Any]()
 
 
 def nondeterministic(function):
