@@ -2,9 +2,9 @@ from __future__ import annotations
 
 
 __all__ = [
-    'nondeterministic', 'guess', 'coguess',
-    'Or', 'And', 'Count', 'Majority', 'maximize', 'minimize',
-    'is_success', 'is_failure', 'is_leaf', 'is_true',
+    'nondeterministic', 'guess', 'coguess', 'Or', 'And',
+    'Count', 'Majority', 'Maximize', 'Minimize', 'maximize',
+    'minimize', 'is_success', 'is_failure', 'is_leaf', 'is_true'
 ]
 
 
@@ -33,6 +33,10 @@ def is_failure(value):
 
 def is_true(x):
     return x is True
+
+
+def identity(x):
+    return x
 
 
 def eval(result):
@@ -108,9 +112,10 @@ class Majority[T](CountingCompTree):
 
 @dataclass
 class OptimizingCompTree[T](CompTree):
-    function: Callable[[T], int | float]
+    function: Callable[[T], int | float] = identity
 
-    def optimize(self, values, mode):
+    def optimize(self, mode):
+        values = map(eval, self.children)
         return mode(filter(is_success, values),
                     key=self.function, default=None)
 
@@ -118,15 +123,13 @@ class OptimizingCompTree[T](CompTree):
 @dataclass
 class Maximize[T](OptimizingCompTree):
     def eval(self):
-        values = map(eval, self.children)
-        return self.optimize(values, mode=max)
+        return self.optimize(max)
 
 
 @dataclass
 class Minimize[T](OptimizingCompTree):
     def eval(self):
-        values = map(eval, self.children)
-        return self.optimize(values, mode=min)
+        return self.optimize(min)
 
 
 RESULT: Any = mp.SimpleQueue()
