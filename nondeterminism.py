@@ -14,7 +14,7 @@ import os
 
 from dataclasses import dataclass
 from abc import ABC, abstractmethod
-from typing import Callable
+from typing import Any, Callable
 
 
 def is_leaf(tree):
@@ -63,7 +63,7 @@ class CompTree[T](ABC):
         ...
 
 
-class Or(CompTree):
+class Or[T](CompTree):
     def eval(self):
         value = False
         for child in self.children:
@@ -73,7 +73,7 @@ class Or(CompTree):
         return value
 
 
-class And(CompTree):
+class And[T](CompTree):
     def eval(self):
         value = True
         for child in self.children:
@@ -83,7 +83,7 @@ class And(CompTree):
         return value
 
 
-class CountingCompTree(CompTree):
+class CountingCompTree[T](CompTree):
     def count(self, pred):
         cnt = pred(self)
         for child in self.children:
@@ -94,12 +94,12 @@ class CountingCompTree(CompTree):
         return cnt
 
 
-class Count(CountingCompTree):
+class Count[T](CountingCompTree):
     def eval(self):
         return self.count(is_true)
 
 
-class Majority(CountingCompTree):
+class Majority[T](CountingCompTree):
     def eval(self):
         n_leaves = self.count(is_leaf)
         n_true = self.count(is_true)
@@ -107,24 +107,29 @@ class Majority(CountingCompTree):
 
 
 @dataclass
-class Maximize[T](CompTree):
+class OptimizingCompTree[T](CompTree):
     function: Callable[[T], int | float]
 
-    def eval(self):
-        domain = (eval(child) for child in self.children)
-        return max(domain, key=self.function)
+    def optimize(self, values, mode):
+        return mode(filter(is_success, values),
+                    key=self.function, default=None)
 
 
 @dataclass
-class Minimize[T](CompTree):
-    function: Callable[[T], int | float]
-
+class Maximize[T](OptimizingCompTree):
     def eval(self):
-        domain = (eval(child) for child in self.children)
-        return min(domain, key=self.function)
+        values = map(eval, self.children)
+        return self.optimize(values, mode=max)
 
 
-RESULT = mp.SimpleQueue()
+@dataclass
+class Minimize[T](OptimizingCompTree):
+    def eval(self):
+        values = map(eval, self.children)
+        return self.optimize(values, mode=min)
+
+
+RESULT: Any = mp.SimpleQueue()
 
 
 def nondeterministic(function):
@@ -136,8 +141,8 @@ def nondeterministic(function):
             os._exit(0)
         else:
             os.wait()
-            result = RESULT.get()
-            return eval(result)
+            tree = RESULT.get()
+            return eval(tree)
     return wrapper
 
 
