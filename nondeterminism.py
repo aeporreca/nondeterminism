@@ -148,7 +148,7 @@ def nondeterministic(function):
     return wrapper
 
 
-def guess(choices=(False, True), *, mode=Or):
+def guess(choices=(False, True), mode=Or):
     children = []
     for choice in choices:
         if os.fork() == 0:
