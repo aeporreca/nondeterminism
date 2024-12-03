@@ -27,8 +27,7 @@ def is_success(value):
         
 
 def is_failure(value):
-    return (value is None or
-            value is False)
+    return not is_success(value)
 
 
 def is_true(x):
