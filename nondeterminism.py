@@ -119,13 +119,11 @@ class OptimizingCompTree[T](CompTree):
                     key=self.function, default=None)
 
 
-@dataclass
 class Maximize[T](OptimizingCompTree):
     def eval(self):
         return self.optimize(max)
 
 
-@dataclass
 class Minimize[T](OptimizingCompTree):
     def eval(self):
         return self.optimize(min)
