@@ -1,0 +1,7 @@
+[project]
+name = "nondeterminism"
+authors = [
+    {name = "Antonio E. Porreca", email = "antonio.porreca@lis-lab.fr"},
+]
+version = "0.0.1"
+description = "Coming soon"
