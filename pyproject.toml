@@ -3,5 +3,5 @@ name = "nondeterminism"
 authors = [
     {name = "Antonio E. Porreca", email = "antonio.porreca@lis-lab.fr"},
 ]
-version = "3.0.0"
+version = "3.0.0-beta"
 description = "A Python library for nondeterministic algorithms"
