@@ -1,6 +1,6 @@
 __all__ = [
     'nondeterministic', 'guess',
-    'maximize', 'first_success'
+    'majority', 'maximize'
 ]
 
 
@@ -26,11 +26,30 @@ def nondeterministic(function):
     return wrapper
 
 
-def first_success(lst):
-    if not lst:
+def is_success(result):
+    return (result is not None and
+            result is not False)
+
+
+def first_success(results):
+    if not results:
         return None
-    return next(filter(None, lst), lst[0])
+    return next(filter(is_success, results), results[0])
         
+
+def majority(results):
+    n = len(results)
+    m = sum(1 for result in results
+            if is_success(result))
+    return 2 * m > n
+
+
+def maximize(key):
+    def max_with_key(iterable):
+        return max(filter(is_success, iterable),
+                   key=key, default=None)
+    return max_with_key
+
 
 def guess(choices=(False, True), mode=first_success):
     results = []
@@ -43,10 +62,3 @@ def guess(choices=(False, True), mode=first_success):
             results.append(result)
     RESULT.put(mode(results))
     os._exit(0)
-
-
-def maximize(key):
-    def max_with_key(iterable):
-        return max(filter(None, iterable),
-                   key=key, default=None)
-    return max_with_key
