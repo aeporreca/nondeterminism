@@ -9,12 +9,14 @@ import multiprocessing as mp
 import os
 
 
-RESULT = mp.SimpleQueue()
+RESULT = None
 
 
 def nondeterministic(function):
     @ft.wraps(function)
     def wrapper(*args, **kwargs):
+        global RESULT
+        RESULT = mp.SimpleQueue()
         if os.fork() == 0:
             result = function(*args, **kwargs)
             RESULT.put(result)
@@ -22,6 +24,7 @@ def nondeterministic(function):
         else:
             os.wait()
             result = RESULT.get()
+            RESULT = None
             return result
     return wrapper
 
