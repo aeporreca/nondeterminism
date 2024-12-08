@@ -327,7 +327,6 @@ def arity(function):
     return len(signature(function).parameters)
 
 @nondeterministic
-@nondeterministic
 def is_q_valid(formula):
     n = arity(formula)
     x = tuple(guess(mode=any) if i % 2 == 0
