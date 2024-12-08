@@ -21,4 +21,4 @@ __all__ = [
 ]
 
 
-from main import *
+from . import *
