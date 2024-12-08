@@ -11,7 +11,7 @@ This library has been mostly designed for two purposes:
 
 This library is not really suitable for production code; its implementation is based on [`fork(2)`](https://en.wikipedia.org/wiki/Fork_(system_call)), so it currently only runs on Unix variants (including Linux, macOS and, I suppose, Windows Subsystem for Linux) and is very slow for any nontrivial practical purpose.[^prolog] On the other hand, the implementation itself might also be of pedagogical interest as a nontrivial example of multiprocessing with shared memory.
 
-[^prolog]: Notice that practical nondeterministic programming languages are actually available if you need them. The one I’m most familiar with is [Prolog](https://en.wikipedia.org/wiki/Prolog) which, by an amazing coincidence, was conceived by Colmerauer and Roussel precisely here in Marseille on the Luminy campus, where I (AEP) currently work. Prolog is amazing (and one of the inspirations behind this library), but its execution model is harder to reason about in terms of computational complexity (or, in any case, it is less familiar) than the usual imperative execution model. Prolog is also the subject of [the second-best joke about programming languages](http://james-iry.blogspot.com/2009/05/brief-incomplete-and-mostly-wrong.html). Besides Prolog, other things of interest in Marseille starting with P are [pastis](https://en.wikipedia.org/wiki/Pastis) and [panisses](https://fr.wikipedia.org/wiki/Panisse).
+[^prolog]: Notice that practical nondeterministic programming languages are actually available if you need them. The one I’m most familiar with is [Prolog](https://en.wikipedia.org/wiki/Prolog) which, by an amazing coincidence, was conceived by Colmerauer and Roussel precisely here in Marseille on the Luminy campus, where I ([@aeporreca]) currently work. Prolog is amazing (and one of the inspirations behind this library), but its execution model is harder to reason about in terms of computational complexity (or, in any case, it is less familiar) than the usual imperative execution model. Prolog is also the subject of [the second-best joke about programming languages](http://james-iry.blogspot.com/2009/05/brief-incomplete-and-mostly-wrong.html). Besides Prolog, other things of interest in Marseille starting with P are [pastis](https://en.wikipedia.org/wiki/Pastis) and [panisses](https://fr.wikipedia.org/wiki/Panisse).
 
 
 ## Contents
@@ -24,6 +24,12 @@ This library is not really suitable for production code; its implementation is b
   - [A remark about infinite computations](#a-remark-about-infinite-computations)
 - [More types of nondeterminism](#more-types-of-nondeterminism)
   - [Conondeterminism](#conondeterminism)
+  - [Alternation](#alternation)
+  - [Counting](#counting)
+  - [Majority](#majority)
+  - [Optimisation](#optimisation)
+  - [Custom modes](#custom-modes)
+- [Other examples](#other-examples)
 
 ## Basic usage
 
@@ -272,11 +278,11 @@ However, a future version of the `nondeterminism` library _might_ implement [dov
 
 “Classic” nondeterminism as in the previous section allows you to solve all problems in [**NP**](https://en.wikipedia.org/wiki/NP_(complexity)) in (simulated) polynomial time, or the larger nondeterministic classes if you allow more time. The type of guesses we make in this type of algorithms can be called _existential_ or _disjunctive_, since the final result will be a success if and only if at least one of the computation paths is successful.
 
-The `mode` keyword parameter to `guess` allows us to change the evaluation strategy. The default value of `mode` is `success` (i.e., `guess()` is the same as `guess(mode=success)`), which returns the first non-`None`, non-`False` result. This is analogous to the [`any`](https://docs.python.org/3/library/functions.html#any) Python builtin function, except that it considers values such as `0` and `[]` as successes, and it does not convert to `True` successful results. You can actually use `guess(mode=any)` if you’re only returning `bool` values.
+The `mode` keyword parameter to `guess` allows us to change the evaluation strategy. The default value of `mode` is `success` (i.e., `guess()` is the same as `guess(mode=success)`), which returns the first non-`None`, non-`False` result if any (or just the first result, if all are `None` or `False`). This is similar to the [`any`](https://docs.python.org/3/library/functions.html#any) Python builtin function, except that it considers values such as `0` and `[]` as successes, and it does not convert successful results to `True`. You can actually use `guess(mode=any)` if you’re only returning `bool` values.
 
 ### Conondeterminism
 
-However, this is just the beginning. The dual of nondeterminism is “conondeterminism”, which uses _universal_ or _conjunctive_ choices. A conondeterministic algorithm is successful if and only if _all_ computation paths are successful; if just one of them fails, then the overall algorithm fails too. The corresponding complexity class is [**coNP**](https://en.wikipedia.org/wiki/Co-NP), assuming polynomial time. The corresponding `mode` for guess is [`all`](https://docs.python.org/3/library/functions.html#all) (i.e., `guess(mode=all)`).
+However, this is just the beginning. The dual of nondeterminism is “conondeterminism”, which uses _universal_ or _conjunctive_ choices. A conondeterministic algorithm is successful if and only if _all_ computation paths are successful; if just one of them fails, then the overall algorithm fails too. The corresponding complexity class is [**coNP**](https://en.wikipedia.org/wiki/Co-NP), assuming polynomial time, and the corresponding `mode` for guess is [`all`](https://docs.python.org/3/library/functions.html#all) (i.e., `guess(mode=all)`).
 
 A classic example of conondeterministic algorithm is primality testing[^primes]: assuming `n >= 2`, you guess a nontrivial divisor, and if it does indeed divide `n`, then it’s not a prime.
 
@@ -299,3 +305,220 @@ Here is a list of the primes below 50:
 >>> [n for n in range(50) if is_prime(n)]
 [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47]
 ```
+
+### Alternation
+
+It turns out that you can freely mix existential and universal guesses (i.e., `guess(mode=any)` and `guess(mode=all)`) in your nondeterministic algorithms! This is called [alternation](https://en.wikipedia.org/wiki/Alternating_Turing_machine), and it’s extremely powerful: each time you switch from existential to universal guesses (or vice versa) you go one level up in the polynomial hierarchy [**PH**](https://en.wikipedia.org/wiki/Polynomial_hierarchy), and if the number of alternations can depend on the size of the input you can even solve all problems in [**PSPACE**](https://en.wikipedia.org/wiki/PSPACE#Other_characterizations) in polynomial time!
+
+The standard **PSPACE**-complete problem is a variant of SAT called [TQBF](https://en.wikipedia.org/wiki/True_quantified_Boolean_formula) (aka QBF, or QSAT). Given a Boolean formula `phi(x`$_0$`, x`$_1$`,` …`, x`$_{n-1}$`)`, is it true that
+
+> $\exists$`x`$_0$ $\forall$`x`$_1$ $\exists$`x`$_2$ $\cdots$ $Q_{n-1}$`x`$_{n-1}$ `phi(x`$_0$`, x`$_1$`,` …`, x`$_{n-1}$`)`
+
+where $Q_i$ is $\exists$ if $i$ is even and $\forall$ if $i$ is odd?
+
+Here is an (unboundedly) alternating algorithm for this problem:
+
+```python
+from inspect import signature
+from nondeterminism import *
+
+# Returns the number of parameters of function
+def arity(function):
+    return len(signature(function).parameters)
+
+@nondeterministic
+@nondeterministic
+def is_q_valid(formula):
+    n = arity(formula)
+    x = tuple(guess(mode=any) if i % 2 == 0
+              else guess(mode=all)
+              for i in range(n))
+    return formula(*x)
+```
+
+For instance, this gives us:
+
+```pycon
+>>> def phi(x, y):
+...     return (x or y) and (x or not y)
+... 
+>>> is_q_valid(phi)
+True
+>>> def psi(x, y, z):
+...     return x and not x and z and y
+... 
+>>> is_q_valid(psi)
+False
+```
+
+### Counting
+
+Counting algorithms return the number of successful computations. The corresponding polynomial-time complexity class is **#P** and the corresponding `mode` for `guess` is `sum`. Counting is also extremely powerful, since [you can solve the whole polynomial hierarchy in polynomial time](https://en.wikipedia.org/wiki/Toda%27s_theorem) if you have access to an oracle for a **#P**-complete problem!
+
+One of the standard **#P**-complete problems is counting how many satisfying truth assignments exist for a given formula (let’s call this number the “satisfiability” of the formula):
+
+```python
+from inspect import signature
+from nondeterminism import *
+
+# Returns the number of parameters of function
+def arity(function):
+    return len(signature(function).parameters)
+
+@nondeterministic
+def satisfiability(formula):
+    n = arity(formula)
+    x = tuple(guess(mode=sum) for i in range(n))
+    return formula(*x)
+```
+
+As an example:
+
+```pycon
+>>> def phi(x, y):
+...     return (x or y) and (x or not y)
+... 
+>>> satisfiability(phi)
+2
+>>> def psi(x, y, z):
+...     return x and not x and z and y
+... 
+>>> satisfiability(psi)
+0
+```
+
+### Majority
+
+Majority algorithms return `True` if and only if the (strict) majority of the computations are accepting. This is [as powerful as counting](https://en.wikipedia.org/wiki/Toda's_theorem)! The corresponding polynomial-time complexity class is [**PP**](https://en.wikipedia.org/wiki/PP_(complexity)) and the corresponding mode for `guess` is `majority`.
+
+The standard **PP**-complete problem is [Majority-SAT](https://en.wikipedia.org/wiki/Boolean_satisfiability_problem#Extensions_of_SAT), i.e., deciding whether the majority of assignments to a Boolean formula satisfy it:
+
+```python
+from inspect import signature
+from itertools import product
+from nondeterminism import *
+
+# Returns the number of parameters of function
+def arity(function):
+    return len(signature(function).parameters)
+
+@nondeterministic
+def is_majority_satisfiable(formula):
+    n = arity(formula)
+    x = guess(product((False, True), repeat=n),
+              mode=majority)
+    return formula(*x)
+```
+
+Notice that this code, rather that making `n` consecutive majority guesses over `(False, True)`, only makes one `guess` over the `n`-th power of `B`, i.e., over the set of Boolean tuples of length `n`. This is necessary, since you want to maximise _once_ over this set, rather than maximising `n` times over `(False, True)`.
+
+For instance:
+
+```pycon
+>>> def phi(x, y):
+...     return (x or y) and (x or not y)
+... 
+>>> is_majority_satisfiable(phi)
+False
+>>> def psi(x, y, z):
+...     return x or y
+... 
+>>> is_majority_satisfiable(psi)
+True
+```
+
+
+## Optimisation
+
+Optimisation algorithm not only give us a (usually non-`bool`-valued) solution to our problem, but one maximising (or minimising) a specific parameter. The corresponding polyonimial-time complexity class is [**OptP**](https://complexityzoo.net/Complexity_Zoo:O#optp), and the corresponding `mode` for `guess` is `maximize(key)` (resp., `minimize(key)`) where `key` is the value to be optimised across all non-`None` solutions.
+
+As trivial examples, consider maximising or minimising the number of `True` values in a tuple of a given length:
+
+```python
+from nondeterminism import *
+
+def n_true(solution):
+    return solution.count(True)
+
+@nondeterministic
+def maximize_true(n):
+    return guess(product((False, True), repeat=n),
+                 mode=maximize(n_true))
+
+@nondeterministic
+def minimize_true(n):
+    return guess(product((False, True), repeat=n),
+                 mode=minimize(n_true))
+```
+
+Observe how, unlike the majority example above, here you can either make consecutive guesses, or a single guess over the Cartesian product of all sets of choices.
+
+```pycon
+>>> maximize_true(0)
+()
+>>> maximize_true(1)
+(True,)
+>>> maximize_true(2)
+(True, True)
+>>> maximize_true(3)
+(True, True, True)
+>>> minimize_true(0)
+()
+>>> minimize_true(3)
+(False, False, False)
+```
+
+By default, the `maximize` and `minimize` mode optimise over the actual solutions themselves (i.e., the `key` is just the identity function), and return `None` if the set of solutions is empty.
+
+For instance, we can re-implement Python’s `max` like this:
+
+```python
+@nondeterministic
+def my_max(X):
+    return guess(X, mode=maximize())
+```
+
+which gives us:
+
+```pycon
+>>> my_max(range(10))
+9
+>>> my_max(range(0))
+>>> 
+```
+
+## Custom modes
+
+You can define your own `mode`s for `guess` (e.g., something based on [leaf languages](https://en.wikipedia.org/wiki/Leaf_language)). A `mode` for `guess` is any function taking as input the list of results of the computation of your `@nondeterministic` function (either `bool` values, or whatever that function returns) and computes their combined result.
+
+For instance, consider “parity algorithm”, which accept if and only if the number of accepting computations is odd. This corresponds to `xor`-ing together all the results:
+
+```python
+def xor(lst):
+    result = False
+    for x in lst:
+        result = result is not x
+    return result
+```
+
+Now you can just use `guess(mode=xor)` in your code. For instance, a funny way of checking if a number is a perfect square is to check if it has an odd number of divisors:
+
+```python
+from nondeterminism import *
+
+@nondeterministic
+def is_square(n):
+    d = guess(range(1, n+1), mode=xor)
+    return n % d == 0
+```
+
+This gives:
+
+```pycon
+>>> [n for n in range(100) if is_square(n)]
+[1, 4, 9, 16, 25, 36, 49, 64, 81]
+```
+
+## Other examples
+
+You can find other examples for the `nondeterminism` library by looking for #TodaysNondeterministicAlgorithm on [Twitter](https://x.com/search?q=%23TodaysNondeterministicAlgorithm%20from%3Aaeporreca&src=typed_query&f=live) or [Bluesky](https://bsky.app/hashtag/TodaysNondeterministicAlgorithm?author=aeporreca.org). Notice that these might not be up-to-date with respect to the interface of the library.
