@@ -408,7 +408,7 @@ def is_majority_satisfiable(formula):
     return formula(*x)
 ```
 
-Notice that this code, rather that making `n` consecutive majority guesses over `(False, True)`, only makes one `guess` over the `n`-th power of `B`, i.e., over the set of Boolean tuples of length `n`. This is necessary, since you want to maximise _once_ over this set, rather than maximising `n` times over `(False, True)`.
+Notice that this code, rather that making `n` consecutive majority guesses over `(False, True)`, only makes one `guess` over the `n`-th power of `(False, True)`, i.e., over the set of Boolean tuples of length `n`. This is necessary, since you want to maximise _once_ over this set, rather than maximising `n` times over `(False, True)`.
 
 For instance:
 
