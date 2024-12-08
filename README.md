@@ -22,6 +22,8 @@ This library is not really suitable for production code; its implementation is b
   - [Guessing non-`bool` values](#guessing-non-bool-values)
   - [Returning non-`bool` values](#returning-non-bool-values)
   - [A remark about infinite computations](#a-remark-about-infinite-computations)
+- [More types of nondeterminism](#more-types-of-nondeterminism)
+  - [Conondeterminism](#conondeterminism)
 
 ## Basic usage
 
