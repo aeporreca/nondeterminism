@@ -20,22 +20,22 @@ import multiprocessing as mp
 import os
 
 
-RESULT = None
+RESULT = []
 
 
 def nondeterministic(function):
     @ft.wraps(function)
     def wrapper(*args, **kwargs):
         global RESULT
-        RESULT = mp.SimpleQueue()
+        RESULT.append(mp.SimpleQueue())
         if os.fork() == 0:
             result = function(*args, **kwargs)
-            RESULT.put(result)
+            RESULT[-1].put(result)
             os._exit(0)
         else:
             os.wait()
-            result = RESULT.get()
-            RESULT = None
+            result = RESULT[-1].get()
+            RESULT.pop()
             return result
     return wrapper
 
@@ -90,7 +90,7 @@ GUESS_ERROR_MSG = \
 
 
 def guess(choices=(False, True), mode=success):
-    if RESULT is None:
+    if RESULT == []:
         raise GuessError(GUESS_ERROR_MSG)
     results = []
     for choice in choices:
@@ -98,7 +98,7 @@ def guess(choices=(False, True), mode=success):
             return choice
         else:
             os.wait()
-            result = RESULT.get()
+            result = RESULT[-1].get()
             results.append(result)
-    RESULT.put(mode(results))
+    RESULT[-1].put(mode(results))
     os._exit(0)
