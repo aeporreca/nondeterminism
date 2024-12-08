@@ -34,11 +34,7 @@ def is_success(x):
             x is not False)
 
 
-def is_failure(x):
-    return not is_success(x)
-
-
-def first(lst, pred):
+def success(lst, pred):
     if not lst:
         return None
     x = lst[0]
@@ -46,14 +42,6 @@ def first(lst, pred):
         if is_success(x):
             return x
     return x
-
-
-def success(lst):
-    return first(lst, is_success)
-
-
-def failure(lst):
-    return first(lst, is_failure)
 
 
 def majority(lst):
