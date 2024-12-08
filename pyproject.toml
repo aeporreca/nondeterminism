@@ -8,12 +8,15 @@ authors = [
 description = "A Python library for nondeterministic algorithms"
 version = "3.0.0-beta"
 readme = "README.md"
-license = {file = "LICENSE.md"}
+license = {text = "LICENSE.md"}
 keywords = [
     "python", "python-library", "python3", "agpl", "decorator",
     "nondeterminism","nondeterministic-algorithms"
 ]
 requires-python = ">= 3.8"
+classifiers = [
+    "License :: OSI Approved :: GNU Affero General Public License v3"
+]
 
 [project.urls]
 homepage = "https://aeporreca.org/nondeterminism"
