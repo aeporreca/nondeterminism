@@ -442,8 +442,8 @@ def n_true(solution):
 
 @nondeterministic
 def maximize_true(n):
-    return guess(product((False, True), repeat=n),
-                 mode=maximize(n_true))
+    return tuple(guess(mode=maximize(n_true))
+                 for i in range(n))
 
 @nondeterministic
 def minimize_true(n):
