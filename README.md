@@ -14,6 +14,15 @@ This library is not really suitable for production code; its implementation is b
 [^prolog]: Notice that practical nondeterministic programming languages are actually available if you need them. The one I’m most familiar with is [Prolog](https://en.wikipedia.org/wiki/Prolog) which, by an amazing coincidence, was conceived by Colmerauer and Roussel precisely here in Marseille on the Luminy campus, where I (AEP) currently work. Prolog is amazing (and one of the inspirations behind this library), but its execution model is harder to reason about in terms of computational complexity (or, in any case, it is less familiar) than the usual imperative execution model. Prolog is also the subject of [the second-best joke about programming languages](http://james-iry.blogspot.com/2009/05/brief-incomplete-and-mostly-wrong.html). Besides Prolog, other things of interest in Marseille starting with P are [pastis](https://en.wikipedia.org/wiki/Pastis) and [panisses](https://fr.wikipedia.org/wiki/Panisse).
 
 
+## Contents
+
+- [Basic usage](#basic-usage)
+  - [A nontrivial example: solving SAT](#a-nontrivial-example-solving-sat)
+  - [Who exactly must be `@nondeterministic`?](#who-exactly-must-be-nondeterministic)
+  - [Guessing non-`bool` values](#guessing-non-bool-values)
+  - [Returning non-`bool` values](#returning-non-bool-values)
+  - [A remark about infinite computations](#a-remark-about-infinite-computations)
+
 ## Basic usage
 
 You declare a function nondeterministic by using the `@nondeterministic` decorator and call `guess` inside it (or in a function called by it) in order to get a `True` or a `False`. Which one? Well, `guess` _wants_ your nondeterministic function to succeed, so it will return a result that allows that, if it is possible at all.
