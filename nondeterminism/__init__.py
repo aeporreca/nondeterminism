@@ -19,6 +19,3 @@ __all__ = [
     'nondeterministic', 'guess', 'GuessError',
     'success', 'majority', 'maximize', 'minimize'
 ]
-
-
-from nondeterminism import *
