@@ -3,10 +3,20 @@ name = "nondeterminism"
 authors = [
     {name = "Antonio E. Porreca"},
     {email = "antonio.porreca@lis-lab.fr"},
+    {name = "Greg Hamerly"},
 ]
 description = "A Python library for nondeterministic algorithms"
 version = "3.0.0-beta"
 readme = "README.md"
+license = {file = "LICENSE.md"}
+keywords = [
+    "python", "python-library", "python3", "agpl", "decorator",
+    "nondeterminism","nondeterministic-algorithms"
+]
+requires-python = ">= 3.8"
 
 [project.urls]
 homepage = "https://aeporreca.org/nondeterminism"
+repository = "https://github.com/aeporreca/nondeterminism.git"
+issues = "https://github.com/aeporreca/nondeterminism/issues"
+documentation = "https://github.com/aeporreca/nondeterminism"
