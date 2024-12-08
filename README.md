@@ -103,7 +103,6 @@ def arity(function):
     return len(signature(function).parameters)
 
 @nondeterministic
-@nondeterministic
 def is_satisfiable(formula):
     n = arity(formula)
     x = tuple(guess() for i in range(n))
