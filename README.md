@@ -260,4 +260,6 @@ def test6():
 
 However, a future version of the `nondeterminism` library _might_ implement [dovetailing](https://en.wikipedia.org/wiki/Dovetailing_(computer_science)) and allow `test5` to halt with a success. (On the other hand, the current behaviour on `test5` is correct, it must never halt.)
 
-Incidentally, if you execute a non-halting nondeterministic function like these in the Python interpreter in interactive mode, and you have to terminate it with a `ctrl-C`, this will probably leave the interpreter in an inconsistent state and you will be forced to restart it. (This is another area where [improvement is needed](https://github.com/aeporreca/nondeterminism/issues/12), if this is possible at all.)
+Incidentally, if you execute a non-halting nondeterministic function like these in the Python interpreter in interactive mode, and you have to terminate it with a `ctrl-C`, this will probably leave the interpreter in an inconsistent state and you will be forced to restart it.[^restart]
+
+[^restart]: This is another area where [improvement is needed](https://github.com/aeporreca/nondeterminism/issues/12), if this is possible at all.
