@@ -21,7 +21,4 @@ __all__ = [
 ]
 
 
-from nondeterminism import (
-    nondeterministic, guess, GuessError,
-    success, majority, maximize, minimize
-)
+from main import *
