@@ -310,11 +310,11 @@ Here is a list of the primes below 50:
 
 It turns out that you can freely mix existential and universal guesses (i.e., `guess(mode=any)` and `guess(mode=all)`) in your nondeterministic algorithms! This is called [alternation](https://en.wikipedia.org/wiki/Alternating_Turing_machine), and it’s extremely powerful: each time you switch from existential to universal guesses (or vice versa) you go one level up in the polynomial hierarchy [**PH**](https://en.wikipedia.org/wiki/Polynomial_hierarchy), and if the number of alternations can depend on the size of the input you can even solve all problems in [**PSPACE**](https://en.wikipedia.org/wiki/PSPACE#Other_characterizations) in polynomial time!
 
-The standard **PSPACE**-complete problem is a variant of SAT called [TQBF](https://en.wikipedia.org/wiki/True_quantified_Boolean_formula) (aka QBF, or QSAT). Given a Boolean formula `phi(x`$_0$`, x`$_1$`,` …`, x`$_{n-1}$`)`, is it true that
+The standard **PSPACE**-complete problem is a variant of SAT called [TQBF](https://en.wikipedia.org/wiki/True_quantified_Boolean_formula) (aka QBF, or QSAT). Given a Boolean formula `phi(x₀, x₁, …, xₙ₋₁)`, is it true that
 
-> $\exists$`x`$_0$ $\forall$`x`$_1$ $\exists$`x`$_2$ $\cdots$ $Q_{n-1}$`x`$_{n-1}$ `phi(x`$_0$`, x`$_1$`,` …`, x`$_{n-1}$`)`
+> ∃`x₀` ∀`x₁` ∃`x₂` ⋯ $Q_{n-1}$`xₙ₋₁` `phi(x₀, x₁, …, xₙ₋₁)`
 
-where $Q_i$ is $\exists$ if $i$ is even and $\forall$ if $i$ is odd?
+where $Q_i$ is ∃ if $i$ is even and ∀ if $i$ is odd?
 
 Here is an (unboundedly) alternating algorithm for this problem:
 
