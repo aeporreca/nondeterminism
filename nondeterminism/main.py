@@ -26,7 +26,6 @@ RESULT = []
 def nondeterministic(function):
     @ft.wraps(function)
     def wrapper(*args, **kwargs):
-        global RESULT
         RESULT.append(mp.SimpleQueue())
         if os.fork() == 0:
             result = function(*args, **kwargs)
