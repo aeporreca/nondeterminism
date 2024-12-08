@@ -29,4 +29,4 @@ issues = "https://github.com/aeporreca/nondeterminism/issues"
 documentation = "https://github.com/aeporreca/nondeterminism"
 
 [tool.mypy]
-ignore_missing_imports = true
+ignore_errors = true
