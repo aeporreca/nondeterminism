@@ -463,7 +463,7 @@ Observe how, unlike the majority example above, here you can either make consecu
 ()
 ```
 
-By default, the `maximize` and `minimize` mode optimise over the actual solutions themselves (i.e., the `key` is just the identity function), and return `None` if the set of solutions is empty.
+By default, the `maximize` and `minimize` modes optimise over the actual solutions themselves (i.e., the `key` is just the identity function), and return `None` if the set of solutions is empty.
 
 For instance, we can re-implement Python’s `max` like this:
 
