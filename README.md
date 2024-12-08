@@ -173,7 +173,7 @@ For instance, the following code solves the [Hamiltonian cycle problem](https://
 
 ```python
 def is_hamiltonian(G):
-    V, E = G
+    (V, E) = G
     n = len(V)
     V = V.copy()
     p = []
@@ -260,6 +260,40 @@ def test6():
 
 However, a future version of the `nondeterminism` library _might_ implement [dovetailing](https://en.wikipedia.org/wiki/Dovetailing_(computer_science)) and allow `test5` to halt with a success. (On the other hand, the current behaviour on `test5` is correct, it must never halt.)
 
-Incidentally, if you execute a non-halting nondeterministic function like these in the Python interpreter in interactive mode, and you have to terminate it with a `ctrl-C`, this will probably leave the interpreter in an inconsistent state and you will be forced to restart it.[^restart]
+> [!WARNING]
+> If you execute a non-halting nondeterministic function like these (or a very slow one) in the Python interpreter in interactive mode, and you terminate it with a `ctrl-C`, this will probably leave the interpreter in an inconsistent state and you will be forced to restart it.[^restart]
 
 [^restart]: This is another area where [improvement is needed](https://github.com/aeporreca/nondeterminism/issues/12), if this is possible at all.
+
+
+## More types of nondeterminism
+
+“Classic” nondeterminism as in the previous section allows you to solve all problems in [**NP**](https://en.wikipedia.org/wiki/NP_(complexity)) in (simulated) polynomial time, or the larger nondeterministic classes if you allow more time. The type of guesses we make in this type of algorithms can be called _existential_ or _disjunctive_, since the final result will be a success if and only if at least one of the computation paths is successful.
+
+The `mode` keyword parameter to `guess` allows us to change the evaluation strategy. The default value of `mode` is `success` (i.e., `guess()` is the same as `guess(mode=success)`), which returns the first non-`None`, non-`False` result. This is analogous to the [`any`](https://docs.python.org/3/library/functions.html#any) Python builtin function, except that it considers values such as `0` and `[]` as successes, and it does not convert to `True` successful results. You can actually use `guess(mode=any)` if you’re only returning `bool` values.
+
+### Conondeterminism
+
+However, this is just the beginning. The dual of nondeterminism is “conondeterminism”, which uses _universal_ or _conjunctive_ choices. A conondeterministic algorithm is successful if and only if _all_ computation paths are successful; if just one of them fails, then the overall algorithm fails too. The corresponding complexity class is [**coNP**](https://en.wikipedia.org/wiki/Co-NP), assuming polynomial time. The corresponding `mode` for guess is [`all`](https://docs.python.org/3/library/functions.html#all) (i.e., `guess(mode=all)`).
+
+A classic example of conondeterministic algorithm is primality testing[^primes]: assuming `n >= 2`, you guess a nontrivial divisor, and if it does indeed divide `n`, then it’s not a prime.
+
+[^primes]: Of course, since 2002 we know that primality can actually be tested in _deterministic_ polynomial time with the [AKS algorithm](https://en.wikipedia.org/wiki/AKS_primality_test).
+
+```python
+from nondeterminism import *
+
+@nondeterministic
+def is_prime(n):
+    if n < 2:
+        return False
+    d = guess(range(2, n), mode=all)
+    return n % d != 0
+```
+
+Here is a list of the primes below 50:
+
+```pycon
+>>> [n for n in range(50) if is_prime(n)]
+[2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47]
+```
