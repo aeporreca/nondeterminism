@@ -310,7 +310,7 @@ Here is a list of the primes below 50:
 
 It turns out that you can freely mix existential and universal guesses (i.e., `guess(mode=any)` and `guess(mode=all)`) in your nondeterministic algorithms! This is called [alternation](https://en.wikipedia.org/wiki/Alternating_Turing_machine), and it’s extremely powerful: each time you switch from existential to universal guesses (or vice versa) you go one level up in the polynomial hierarchy [**PH**](https://en.wikipedia.org/wiki/Polynomial_hierarchy), and if the number of alternations can depend on the size of the input you can even solve all problems in [**PSPACE**](https://en.wikipedia.org/wiki/PSPACE#Other_characterizations) in polynomial time!
 
-The standard **PSPACE**-complete problem is a variant of SAT called [TQBF](https://en.wikipedia.org/wiki/True_quantified_Boolean_formula) (aka QBF, or QSAT). Given a Boolean formula `phi(x₀, x₁, …, xₙ₋₁)`, is it true that
+One of the standard **PSPACE**-complete problem is a variant of SAT called [TQBF](https://en.wikipedia.org/wiki/True_quantified_Boolean_formula) (aka QBF, or QSAT), where each variable is quantified… in an alternated fashion, of course. Given a Boolean formula `phi(x₀, x₁, …, xₙ₋₁)`, is it true that
 
 > ∃`x₀` ∀`x₁` ∃`x₂` ⋯ $Q_{n-1}$`xₙ₋₁` `phi(x₀, x₁, …, xₙ₋₁)`
 
