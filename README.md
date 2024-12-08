@@ -143,7 +143,7 @@ def arity(function):
     return len(signature(function).parameters)
 
 def guess_assignment(nvars):
-    return [guess() for i in range(nvars)]
+    return tuple(guess() for i in range(nvars))
 
 @nondeterministic
 def is_satisfiable(formula):
