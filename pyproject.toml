@@ -28,5 +28,6 @@ repository = "https://github.com/aeporreca/nondeterminism.git"
 issues = "https://github.com/aeporreca/nondeterminism/issues"
 documentation = "https://github.com/aeporreca/nondeterminism"
 
-[tool.mypy-nondeterminism]
+[[tool.mypy.overrides]]
+module = "nondeterminism"
 ignore_missing_imports = true
