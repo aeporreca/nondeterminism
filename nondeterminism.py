@@ -1,6 +1,6 @@
 __all__ = [
-    'nondeterministic', 'guess',
-    'success', 'failure', 'majority', 'maximize'
+    'nondeterministic', 'guess', 'GuessError',
+    'success', 'failure', 'majority', 'maximize',
 ]
 
 
@@ -71,7 +71,17 @@ def maximize(key):
     return max_with_key
 
 
+class GuessError(RuntimeError):
+    pass
+
+
+GUESS_ERROR_MSG = \
+    'can only guess in a nondeterministic context'
+
+
 def guess(choices=(False, True), mode=success):
+    if RESULT is None:
+        raise GuessError(GUESS_ERROR_MSG)
     results = []
     for choice in choices:
         if os.fork() == 0:
