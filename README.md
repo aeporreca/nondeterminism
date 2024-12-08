@@ -431,40 +431,37 @@ True
 
 Optimisation algorithm not only give us a (usually non-`bool`-valued) solution to our problem, but one maximising (or minimising) a specific parameter. The corresponding polyonimial-time complexity class is [**OptP**](https://complexityzoo.net/Complexity_Zoo:O#optp), and the corresponding `mode` for `guess` is `maximize(key)` (resp., `minimize(key)`) where `key` is the value to be optimised across all non-`None` solutions.
 
-As trivial examples, consider maximising or minimising the number of `True` values in a tuple of a given length:
+As trivial examples, consider maximising or minimising the sum of binary tuples of a given length:
 
 ```python
 from nondeterminism import *
 
-def n_true(solution):
-    return solution.count(True)
-
 @nondeterministic
-def maximize_true(n):
-    return tuple(guess(mode=maximize(n_true))
+def maximize_sum(n):
+    return tuple(guess(range(2), mode=maximize(sum))
                  for i in range(n))
 
 @nondeterministic
-def minimize_true(n):
-    return guess(product((False, True), repeat=n),
-                 mode=minimize(n_true))
+def minimize_sum(n):
+    return guess(product(range(2), repeat=n),
+                 mode=minimize(sum))
 ```
 
 Observe how, unlike the majority example above, here you can either make consecutive guesses, or a single guess over the Cartesian product of all sets of choices.
 
 ```pycon
->>> maximize_true(0)
+>>> maximize_sum(3)
+(1, 1, 1)
+>>> maximize_sum(1)
+(1,)
+>>> maximize_sum(0)
 ()
->>> maximize_true(1)
-(True,)
->>> maximize_true(2)
-(True, True)
->>> maximize_true(3)
-(True, True, True)
->>> minimize_true(0)
+>>> minimize_sum(3)
+(0, 0, 0)
+>>> minimize_sum(2)
+(0, 0)
+>>> minimize_sum(0)
 ()
->>> minimize_true(3)
-(False, False, False)
 ```
 
 By default, the `maximize` and `minimize` mode optimise over the actual solutions themselves (i.e., the `key` is just the identity function), and return `None` if the set of solutions is empty.
