@@ -19,6 +19,7 @@ This library is not really suitable for production code; its implementation is b
 
 ## Contents
 
+- [Installation](#installation)
 - [Basic usage](#basic-usage)
   - [A nontrivial example: solving SAT](#a-nontrivial-example-solving-sat)
   - [Who exactly must be `@nondeterministic`?](#who-exactly-must-be-nondeterministic)
@@ -33,6 +34,10 @@ This library is not really suitable for production code; its implementation is b
   - [Optimisation](#optimisation)
   - [Custom modes](#custom-modes)
 - [Other examples](#other-examples)
+
+## Installation
+
+You can install this library via `pip install nondeterminism`.
 
 ## Basic usage
 
