@@ -10,7 +10,7 @@ authors = [
     {name = "Greg Hamerly"},
 ]
 description = "A Python library for nondeterministic algorithms"
-version = "3.0.0-beta.2"
+version = "3.0.0"
 readme = "README.md"
 license = {text = "LICENSE.md"}
 keywords = [
