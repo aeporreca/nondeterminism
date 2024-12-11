@@ -44,7 +44,7 @@ This library is not really suitable for production code; its implementation is b
 
 ## Installation
 
-You can install this library via `pip install nondeterminism`. For the most recent changes, please check [https://github.com/aeporreca/nondeterminism](Git repository).
+You can install this library via `pip install nondeterminism`. For the most recent changes, please check [Git repository](https://github.com/aeporreca/nondeterminism).
 
 
 ## License
