@@ -132,7 +132,7 @@ True
 False
 ```
 
-As a result, `is_satisfiable` returns `True` if and only if there is a satisfying assignment for the variables of `formula`. In other terms, the final result is `True` if and only if one possible computation of `is_satisfiable` (corresponding to a particular sequence of choices by made `guess`) returns `True`.
+As a result, `is_satisfiable` returns `True` if and only if there is a satisfying assignment for the variables of `formula`. In other terms, the final result is `True` if and only if one possible computation of `is_satisfiable` (corresponding to a particular sequence of choices made by `guess`) returns `True`.
 
 
 ### Who exactly must be `@nondeterministic`?
