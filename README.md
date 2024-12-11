@@ -1,6 +1,7 @@
-# nondeterminism
+# The `nondeterminism` Python library
 
-> [!NOTE]
+> 🗞️ *News*
+>
 > 9 December 2024: `nondeterminism` 3.0.0 has been [released](https://github.com/aeporreca/nondeterminism/releases)! You can now install it with `pip install nondeterminism`.
 
 A Python library for writing nondeterministic algorithms (as in [nondeterministic Turing machines](https://en.wikipedia.org/wiki/Non-deterministic_Turing_machine), not directly related to randomised algorithms or to algorithms that just have inconsistent output due to bugs).
@@ -16,13 +17,15 @@ This library is not really suitable for production code; its implementation is b
 
 [^prolog]: Notice that practical nondeterministic programming languages are actually available if you need them. The one I’m most familiar with is [Prolog](https://en.wikipedia.org/wiki/Prolog) which, by an amazing coincidence, was conceived by Colmerauer and Roussel precisely here in Marseille on the Luminy campus, where I ([AEP](https://aeporreca.org)) currently work. Prolog is amazing (and one of the inspirations behind this library), but its execution model is harder to reason about in terms of computational complexity (or, in any case, it is less familiar) than the usual imperative execution model. Prolog is also the subject of [the second-best joke about programming languages](http://james-iry.blogspot.com/2009/05/brief-incomplete-and-mostly-wrong.html). Besides Prolog, other things of interest in Marseille starting with P are [pastis](https://en.wikipedia.org/wiki/Pastis) and [panisses](https://fr.wikipedia.org/wiki/Panisse).
 
-> [!WARNING]
+> ⚠️ *Warning*
+>
 > Although this library does exploit multiprocessing, it is not multiprocessing-safe itself! Don’t run multiple nondeterministic functions in parallel (although you _can_ call a nondeterministic function from another nondeterministic function, [oracle-like](https://en.wikipedia.org/wiki/Oracle_machine)).
 
 
 ## Contents
 
 - [Installation](#installation)
+- [License](#license)
 - [Basic usage](#basic-usage)
   - [A nontrivial example: solving SAT](#a-nontrivial-example-solving-sat)
   - [Who exactly must be `@nondeterministic`?](#who-exactly-must-be-nondeterministic)
@@ -38,9 +41,16 @@ This library is not really suitable for production code; its implementation is b
   - [Custom modes](#custom-modes)
 - [Other examples](#other-examples)
 
+
 ## Installation
 
-You can install this library via `pip install nondeterminism`.
+You can install this library via `pip install nondeterminism`. For the most recent changes, please check [https://github.com/aeporreca/nondeterminism](Git repository).
+
+
+## License
+
+In order to promote open research and teaching, the `nondeterminism` library is distributed under the [GNU AGPL](https://www.gnu.org/licenses/agpl-3.0.en.html) license.
+
 
 ## Basic usage
 
@@ -279,7 +289,8 @@ def test6():
 
 However, a future version of the `nondeterminism` library _might_ implement [dovetailing](https://en.wikipedia.org/wiki/Dovetailing_(computer_science)) and allow `test6` to halt with a success. (On the other hand, the current behaviour on `test5` is correct, as this function must never halt.)
 
-> [!WARNING]
+> ⚠️ *Warning*
+> 
 > If you execute a non-halting nondeterministic function like these (or a very slow one) in the Python interpreter in interactive mode, and you terminate it with a `ctrl-C`, this will probably leave the interpreter in an inconsistent state and you will be forced to restart it.[^restart]
 
 [^restart]: This is another area where [improvement is needed](https://github.com/aeporreca/nondeterminism/issues/12), if this is possible at all.
@@ -290,6 +301,7 @@ However, a future version of the `nondeterminism` library _might_ implement [dov
 “Classic” nondeterminism as in the previous section allows you to solve all problems in [**NP**](https://en.wikipedia.org/wiki/NP_(complexity)) in (simulated) polynomial time, or the larger nondeterministic classes if you allow more time. The type of guesses we make in this type of algorithms can be called _existential_ or _disjunctive_, since the final result will be a success if and only if at least one of the computation paths is successful.
 
 The `mode` keyword parameter to `guess` allows us to change the evaluation strategy. The default value of `mode` is `success` (i.e., `guess()` is the same as `guess(mode=success)`), which returns the first non-`None`, non-`False` result if any (or just the first result, if all are `None` or `False`). This is similar to the [`any`](https://docs.python.org/3/library/functions.html#any) Python builtin function, except that it considers values such as `0` and `[]` as successes, and it does not convert successful results to `True`. You can actually use `guess(mode=any)` if you’re only returning `bool` values.
+
 
 ### Conondeterminism
 
@@ -316,6 +328,7 @@ Here is a list of the primes below 50:
 >>> [n for n in range(50) if is_prime(n)]
 [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47]
 ```
+
 
 ### Alternation
 
@@ -361,6 +374,7 @@ True
 False
 ```
 
+
 ### Counting
 
 Counting algorithms return the number of successful computations. The corresponding polynomial-time complexity class is **#P** and the corresponding `mode` for `guess` is `sum`. Counting is also extremely powerful, since [you can solve the whole polynomial hierarchy in polynomial time](https://en.wikipedia.org/wiki/Toda%27s_theorem) if you have access to an oracle for a **#P**-complete problem!
@@ -396,6 +410,7 @@ As an example:
 >>> satisfiability(psi)
 0
 ```
+
 
 ### Majority
 
@@ -494,6 +509,7 @@ which gives us:
 >>> 
 ```
 
+
 ## Custom modes
 
 You can define your own `mode`s for `guess` (e.g., something based on [leaf languages](https://en.wikipedia.org/wiki/Leaf_language)). A `mode` for `guess` is any function taking as input the list of results of the computation of your `@nondeterministic` function (either `bool` values, or whatever that function returns) and computes their combined result.
@@ -525,6 +541,7 @@ This gives:
 >>> [n for n in range(100) if is_square(n)]
 [1, 4, 9, 16, 25, 36, 49, 64, 81]
 ```
+
 
 ## Other examples
 
