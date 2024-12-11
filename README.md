@@ -1,6 +1,6 @@
 # nondeterminism
 
-> **Note**
+> [!NOTE]
 > 9 December 2024: `nondeterminism` 3.0.0 has been [released](https://github.com/aeporreca/nondeterminism/releases)! You can now install it with `pip install nondeterminism`.
 
 A Python library for writing nondeterministic algorithms (as in [nondeterministic Turing machines](https://en.wikipedia.org/wiki/Non-deterministic_Turing_machine), not directly related to randomised algorithms or to algorithms that just have inconsistent output due to bugs).
