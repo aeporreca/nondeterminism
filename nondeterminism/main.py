@@ -24,14 +24,20 @@ __all__ = [
 import functools as ft
 import multiprocessing as mp
 import os
+import signal as sg
 
 
 RESULT = None
 
 
+def handle_sigint(sig, frame):
+    os._exit(sig + 128)
+
+
 def nondeterministic(function):
     @ft.wraps(function)
     def wrapper(*args, **kwargs):
+        sg.signal(sg.SIGINT, handle_sigint)
         global RESULT
         OLD_RESULT = RESULT
         RESULT = mp.SimpleQueue()
