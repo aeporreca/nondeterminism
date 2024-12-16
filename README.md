@@ -490,14 +490,14 @@ Observe how, unlike the majority example above, here you can either make consecu
 ()
 ```
 
-By default, the `maximize` and `minimize` modes optimise over the actual solutions themselves (i.e., the `key` is just the identity function), and return `None` if the set of solutions is empty.
+By default, the `maximize` and `minimize` modes optimise over the actual solutions themselves (i.e., the `key` is just the identity function), and return `None` if the set of solutions is empty. If using these optimisation modes this way you can drop the parentheses, e.g., you can write `guess(mode=maximize)` instead of `guess(mode=maximize())`.
 
 For instance, we can re-implement Python’s `max` like this:
 
 ```python
 @nondeterministic
 def my_max(X):
-    return guess(X, mode=maximize())
+    return guess(X, mode=maximize)
 ```
 
 which gives us:
