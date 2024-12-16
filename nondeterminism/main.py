@@ -76,29 +76,29 @@ GUESS_ERROR_MSG = (
 )
 
 
-RESULT = None
+QUEUE = None
 
 
 def nondeterministic(function):
     @ft.wraps(function)
     def wrapper(*args, **kwargs):
-        global RESULT
-        OLD_RESULT = RESULT
-        RESULT = mp.SimpleQueue()
+        global QUEUE
+        old_queue = QUEUE
+        QUEUE = mp.SimpleQueue()
         if os.fork() == 0:
             result = function(*args, **kwargs)
-            RESULT.put(result)
+            QUEUE.put(result)
             os._exit(0)
         else:
             os.wait()
-            result = RESULT.get()
-            RESULT = OLD_RESULT
+            result = QUEUE.get()
+            QUEUE = old_queue
             return result
     return wrapper
 
 
 def guess(choices=(False, True), mode=success):
-    if RESULT is None:
+    if QUEUE is None:
         raise GuessError(GUESS_ERROR_MSG)
     if mode is minimize:
         mode = minimize()
@@ -110,7 +110,7 @@ def guess(choices=(False, True), mode=success):
             return choice
         else:
             os.wait()
-            result = RESULT.get()
+            result = QUEUE.get()
             results.append(result)
-    RESULT.put(mode(results))
+    QUEUE.put(mode(results))
     os._exit(0)
