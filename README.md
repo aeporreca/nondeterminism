@@ -531,7 +531,7 @@ from nondeterminism import *
 
 @nondeterministic
 def is_square(n):
-    d = guess(range(1, n+1), mode=xor)
+    d = guess(range(1, n + 1), mode=xor)
     return n % d == 0
 ```
 
