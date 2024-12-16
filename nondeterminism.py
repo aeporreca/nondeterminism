@@ -1,4 +1,25 @@
-# WARNING: Broken code!
+# nondeterminism - A Python library for nondeterministic algorithms
+# Copyright (C) 2019, 2021, 2023, 2024 Antonio E. Porreca, Greg Hamerly
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+
+__all__ = [
+    'nondeterministic', 'guess', 'GuessError',
+    'success', 'RESULT'
+]
+
 
 import functools as ft
 import itertools as it
@@ -7,90 +28,148 @@ import os
 import signal as sg
 
 
-# Exit codes used below
+RESULT = []
 
-SUCCESS = 0
-FAILURE = 1
-TIMEOUT = 2
-
-
-# Nondeterminism decorator, modify function so that it returns
-# a non-False, non-None result from an accepting computation
 
 def nondeterministic(function):
     @ft.wraps(function)
     def wrapper(*args, **kwargs):
-        queue = mp.SimpleQueue()
-        queue.put(None)                           # Always something to return
+        RESULT.append(mp.SimpleQueue())
         if os.fork() == 0:
             result = function(*args, **kwargs)
-            queue.get()                           # We only keep one result
-            queue.put(result)                     # Replace the previous result
-            if (result is not None and
-                    result is not False):         # Found an acceptable result
-                os._exit(SUCCESS)                 # No need to go on
-            else:
-                os._exit(FAILURE)                 # Keep on searching
+            RESULT[-1].put(result)
+            os._exit(0)
         else:
-            os.wait()                             # No need to check the status
-            return queue.get()
+            os.wait()
+            result = RESULT[-1].get()
+            RESULT.pop()
+            return result
     return wrapper
 
 
-# Halt with a TIMEOUT exit code
+def is_success(x):
+    return (x is not None and
+            x is not False)
+
+
+def is_failure(x):
+    return not is_success(x)
+
+
+def success(lst):
+    if not lst:
+        return None
+    x = lst[0]
+    for x in lst:
+        if is_success(x):
+            return x
+    return x
+
+
+class GuessError(RuntimeError):
+    pass
+
+
+GUESS_ERROR_MSG = \
+    'can only guess in a nondeterministic context'
+
 
 def timeout_handler(sig, _):
-    os._exit(TIMEOUT)
+    print('timeout', flush=True)
+    os._exit(0)
 
-
-# Set up an alarm after timeout seconds
 
 def setup_alarm(timeout):
     sg.signal(sg.SIGALRM, timeout_handler)
     sg.setitimer(sg.ITIMER_REAL, timeout)
 
 
-# Iterate over all pairs (n, x) for n a positive integer
-# and x in choices
-
-def dovetail(choices):
-    choices, copy = it.tee(choices)
-    try:
-        next(copy)
-    except StopIteration:
-        return                                    # choices is empty
-    for n in it.count(1):
-        choices, copy = it.tee(choices)
-        steps = reversed(range(1, n + 1))
-        yield from zip(steps, copy)
-
-
-# Time quantum in seconds
-
 QUANTUM = 0.1
 
 
-# Guess one of the choices, halting as soon as a computation
-# accepts (i.e., it returns non-False, non-None)
+def guess(choices=(False, True), mode=success, halt=is_success):
+    if RESULT == []:
+        raise GuessError(GUESS_ERROR_MSG)
+    for steps in it.count(1):
+        results = []
+        nchoices = 0
+        combined = None
+        for choice in choices:
+            if os.fork() == 0:
+                setup_alarm(steps * QUANTUM)
+                return choice
+            else:
+                nchoices += 1
+                _, status = os.wait()
+                code = os.WEXITSTATUS(status)
+                if not RESULT[-1].empty():
+                    result = RESULT[-1].get()
+                    # inefficient
+                    results.append(result)
+                    combined = mode(results)
+                    if halt(combined):
+                        break
+        if halt(combined) or len(results) == nchoices:
+            break
+    RESULT[-1].put(combined)
+    os._exit(0)
 
-def guess(choices=(False, True)):
-    print('in guess')
-    old_steps = 0
-    for steps, choice in dovetail(choices):
-        print('> trying', steps, choice)
-        n_halted = 0
-        if os.fork() == 0:
-            setup_alarm(steps * QUANTUM)
-            return choice
-        else:
-            _, status = os.wait()
-            code = os.WEXITSTATUS(status)
-            if code == SUCCESS:
-                os._exit(SUCCESS)
-            if code != TIMEOUT:
-                n_halted += 1
-        if steps != old_steps and n_halted == steps:
-            os._exit(FAILURE)
-        else:
-            old_steps = steps
-    os._exit(FAILURE)
+
+# Tests
+
+@nondeterministic
+def test1():
+    halt = guess()
+    if halt:
+        return True
+    while True:
+        pass
+
+
+@nondeterministic
+def test2():
+    loop = guess()
+    if not loop:
+        return True
+    while True:
+        pass
+
+
+@nondeterministic
+def is_composite(n):
+    if n < 2:
+        return False
+    d = guess(range(1, n))
+    if d == 1:
+        while True:
+            pass
+    else:
+        return n % d == 0
+
+
+import time
+import random
+
+
+@nondeterministic
+def divisor(n):
+    if n < 2:
+        return False
+    d = guess(range(2, n))
+    time.sleep(random.random())
+    if n % d == 0:
+        return d
+
+
+@nondeterministic
+def find_natural(pred):
+    naturals = it.count(0)
+    n = guess(naturals)
+    if pred(n):
+        return n
+
+
+@nondeterministic
+def test3(n):
+    x = guess(range(n))
+    return False
