@@ -100,6 +100,10 @@ GUESS_ERROR_MSG = (
 def guess(choices=(False, True), mode=success):
     if RESULT is None:
         raise GuessError(GUESS_ERROR_MSG)
+    if mode is minimize:
+        mode = minimize()
+    elif mode is maximize:
+        mode = maximize()
     results = []
     for choice in choices:
         if os.fork() == 0:
