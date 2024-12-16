@@ -26,27 +26,6 @@ import multiprocessing as mp
 import os
 
 
-RESULT = None
-
-
-def nondeterministic(function):
-    @ft.wraps(function)
-    def wrapper(*args, **kwargs):
-        global RESULT
-        OLD_RESULT = RESULT
-        RESULT = mp.SimpleQueue()
-        if os.fork() == 0:
-            result = function(*args, **kwargs)
-            RESULT.put(result)
-            os._exit(0)
-        else:
-            os.wait()
-            result = RESULT.get()
-            RESULT = OLD_RESULT
-            return result
-    return wrapper
-
-
 def is_success(x):
     return (x is not None and
             x is not False)
@@ -95,6 +74,27 @@ class GuessError(RuntimeError):
 GUESS_ERROR_MSG = (
     'can only guess in a nondeterministic context'
 )
+
+
+RESULT = None
+
+
+def nondeterministic(function):
+    @ft.wraps(function)
+    def wrapper(*args, **kwargs):
+        global RESULT
+        OLD_RESULT = RESULT
+        RESULT = mp.SimpleQueue()
+        if os.fork() == 0:
+            result = function(*args, **kwargs)
+            RESULT.put(result)
+            os._exit(0)
+        else:
+            os.wait()
+            result = RESULT.get()
+            RESULT = OLD_RESULT
+            return result
+    return wrapper
 
 
 def guess(choices=(False, True), mode=success):
