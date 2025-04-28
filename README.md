@@ -200,6 +200,8 @@ By default, `guess` returns a `bool` value, either `False` or `True`; but by giv
 For instance, the following code solves the [Hamiltonian cycle problem](https://en.wikipedia.org/wiki/Hamiltonian_path_problem) by guessing a permutation of the vertices of the input graph:
 
 ```python
+from nondeterminism import *
+
 @nondeterministic
 def is_hamiltonian(G):
     (V, E) = G
