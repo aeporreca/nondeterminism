@@ -34,7 +34,6 @@ def is_success(x):
 def success(lst):
     if not lst:
         return None
-    x = lst[0]
     for x in lst:
         if is_success(x):
             return x
