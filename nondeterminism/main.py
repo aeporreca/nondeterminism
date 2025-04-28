@@ -38,7 +38,7 @@ def success(lst):
     for x in lst:
         if is_success(x):
             return x
-    return x
+    return x                    # Last value
 
 
 def majority(lst):
