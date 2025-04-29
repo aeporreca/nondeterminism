@@ -267,7 +267,7 @@ If no satisfying assignment is found, you get `None` (invisible in the Python in
 
 ### A remark about infinite computations
 
-Often nondeterministic algorithms are defined in such a way that even infinite (non-halting) computation paths are allowed, as long as _at least one halting path exists_. This is not currently allowed by the `nondeterminism` library: if a sequence of choices leads us to a non-terminating computation, the nondeterministic function will not halt.
+Often nondeterministic algorithms are defined in such a way that even infinite (non-halting) computation paths are allowed, as long as at least one halting path exists](https://en.wikipedia.org/w/index.php?title=Nondeterministic_Turing_machine&oldid=1250995622#Resolution_of_multiple_rules). This is not currently allowed by the `nondeterminism` library: if a sequence of choices leads us to a non-terminating computation, the nondeterministic function will not halt.
 
 For instance, with the current implementation neither of the following `test5` and `test6` functions halts:
 
