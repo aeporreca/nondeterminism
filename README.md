@@ -457,7 +457,7 @@ True
 
 ## Optimisation
 
-Optimisation algorithm not only give us a (usually non-`bool`-valued) solution to our problem, but one maximising (or minimising) a specific parameter. The corresponding polyonimial-time complexity class is [**OptP**](https://complexityzoo.net/Complexity_Zoo:O#optp), and the corresponding `mode` for `guess` is `maximize(key)` (resp., `minimize(key)`) where `key` is the value to be optimised across all non-`None` solutions.
+Optimisation algorithms not only give us a (usually non-`bool`-valued) solution to our problem, but one maximising (or minimising) a specific parameter. The corresponding polyonimial-time complexity class is [**OptP**](https://complexityzoo.net/Complexity_Zoo:O#optp), and the corresponding `mode` for `guess` is `maximize(key)` (resp., `minimize(key)`) where `key` is the value to be optimised across all non-`None` solutions.
 
 As trivial examples, consider maximising or minimising the sum of binary tuples of a given length:
 
